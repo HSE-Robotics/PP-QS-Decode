@@ -15,7 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants().mass(10.5)
-            .lateralZeroPowerAcceleration(-82.20349828074362);
+            .lateralZeroPowerAcceleration(-82.20349828074362)
+            .forwardZeroPowerAcceleration(-41.278);
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
