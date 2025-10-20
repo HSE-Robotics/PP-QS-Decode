@@ -39,15 +39,7 @@ public class ReggieTeleop_v1 extends OpMode {
     private Reggie Miller;
     public static Pose startingPose;
     //Crush Variables
-    private enum IntakeState{
-        IN,
-        OUT
-    }
-    private enum ScoringSelection{
-        SAMPLE,
-        SPECIMEN
-    }
-    ScoringSelection scoringSelection = ScoringSelection.SPECIMEN;
+
     public enum ScoringState{
         IDLE,
         ACCELERATING,
@@ -55,23 +47,11 @@ public class ReggieTeleop_v1 extends OpMode {
         COOLING_DOWN
     }
     ScoringState artifactScoringState = ScoringState.IDLE;
-    private enum IntakeCurrState{
-        IN,
-        OUT
-    }
 
     int shootingState = 0;
-    private boolean IntakeElbowDown = false;
-    private boolean OuttakeElbowDown = false;
-    private boolean OuttakeClawOpen = false;
-    private boolean IntakeClawOpen = true;
-    private boolean IntakeWristChanged = false;
-    private boolean IntakeSliderChanged = false;
     public boolean inEndgame;
     public boolean blockpos;
     public ElapsedTime shootingTime, playTime;
-
-    public boolean hangersMoving= false;
 
     /**
      * This initializes the drive motors as well as the Follower and motion Vectors.
@@ -152,9 +132,7 @@ public class ReggieTeleop_v1 extends OpMode {
 
 
         //General code for both options (1 or 2 Players)
-        if(playTime.seconds()>110 && !hangersMoving){
-            hangersMoving = true;
-        }if(playTime.seconds()>40 && !inEndgame){
+        if(playTime.seconds()>40 && !inEndgame){
             gamepad1.rumble(3000);
             gamepad2.rumble(3000);
             endgameLED();
