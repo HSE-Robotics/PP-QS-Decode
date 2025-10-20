@@ -89,17 +89,18 @@ public class ReggieTeleop_v1 extends OpMode {
          *
          */
         follower.update();
-        follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+        follower.setTeleOpDrive(gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
 
         switch (artifactScoringState){
             case IDLE:
                         if(gamepad1.left_bumper && shootingState==0){
                             shootingState=1;
                             Miller.setShooterPower(100,Miller.leftShooterMotor);
+                            Miller.setShooterPower(100,Miller.rightShooterMotor);
                             setScoringState(ScoringState.ACCELERATING);
 
 
-                        } else if (!gamepad1.cross) {
+                        } else if (!gamepad1.left_bumper) {
                             shootingState = 0;
                         }
                         break;
@@ -108,16 +109,19 @@ public class ReggieTeleop_v1 extends OpMode {
                             shootingState=1;
                             Miller.indexerPower(1.0,Miller.leftIndexerServo);
                             setScoringState(ScoringState.SHOOTING);
-                        } else if (!gamepad1.cross) {
+                        } else if (!gamepad1.left_bumper) {
                             shootingState = 0;
                         }
                         break;
             case SHOOTING:
-                        if(shootingTime.seconds()>2.0){
+                        if(shootingTime.seconds()>1.0 && gamepad1.left_bumper && shootingState==0){
                             Miller.indexerPower(0.0,Miller.leftIndexerServo);
                             Miller.setShooterPower(0.0,Miller.leftShooterMotor);
-                            shootingState=0;
+                            Miller.setShooterPower(0.0,Miller.rightShooterMotor);
+                            shootingState=1;
                             setScoringState(ScoringState.IDLE);
+                        }else if (!gamepad1.left_bumper) {
+                            shootingState = 0;
                         }
                 break;
 

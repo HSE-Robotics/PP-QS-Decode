@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -37,6 +38,8 @@ public class Reggie {
         sorterServo = hwMap.get(Servo.class, "indServo");
         leftIndexerServo = hwMap.get(CRServo.class, "LServo");
         rightIndexerServo = hwMap.get(CRServo.class, "RServo");
+
+        leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         // Set all motors to zero power
