@@ -50,7 +50,7 @@ public class Reggie {
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Set servo initial position
-        sorterServo.setPosition(0.25); // Example initial position
+        this.setSorterServoPosition(0.25); // Example initial position
     }
 
 
