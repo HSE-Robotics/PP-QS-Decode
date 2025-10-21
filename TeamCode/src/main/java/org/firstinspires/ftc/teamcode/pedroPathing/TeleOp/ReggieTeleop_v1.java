@@ -42,8 +42,10 @@ public class ReggieTeleop_v1 extends OpMode {
 
     public enum ScoringState{
         IDLE,
-        ACCELERATING,
-        SHOOTING,
+        ACCELERATING_FAR,
+        ACCELERATING_NEAR,
+        SHOOTING_RIGHT,
+        SHOOTING_LEFT,
         COOLING_DOWN
     }
     ScoringState artifactScoringState = ScoringState.IDLE;
@@ -97,23 +99,50 @@ public class ReggieTeleop_v1 extends OpMode {
                             shootingState=1;
                             Miller.setShooterPower(100,Miller.leftShooterMotor);
                             Miller.setShooterPower(100,Miller.rightShooterMotor);
-                            setScoringState(ScoringState.ACCELERATING);
+                            setScoringState(ScoringState.ACCELERATING_FAR);
 
 
                         } else if (!gamepad1.left_bumper) {
                             shootingState = 0;
                         }
+                        if(gamepad1.right_bumper && shootingState==0){
+                            shootingState=1;
+                            Miller.setShooterPower(80,Miller.leftShooterMotor);
+                            Miller.setShooterPower(80,Miller.rightShooterMotor);
+                            setScoringState(ScoringState.ACCELERATING_NEAR);
+
+
+                        } else if (!gamepad1.right_bumper) {
+                            shootingState = 0;
+                        }
                         break;
-            case ACCELERATING:
+            case ACCELERATING_FAR:
                         if(gamepad1.left_bumper && shootingState==0 && shootingTime.seconds()>3.0){
                             shootingState=1;
-                            Miller.indexerPower(1.0,Miller.leftIndexerServo);
-                            setScoringState(ScoringState.SHOOTING);
-                        } else if (!gamepad1.left_bumper) {
+                            Miller.indexerPower(100,Miller.leftIndexerServo);
+                            setScoringState(ScoringState.SHOOTING_LEFT);
+                        }else if(gamepad1.right_bumper && shootingState==0 && shootingTime.seconds()>3.0){
+                            shootingState=1;
+                            Miller.indexerPower(100,Miller.rightIndexerServo);
+                            setScoringState(ScoringState.SHOOTING_RIGHT);
+                        }else if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
                             shootingState = 0;
                         }
                         break;
-            case SHOOTING:
+            case ACCELERATING_NEAR:
+                        if(gamepad1.left_bumper && shootingState==0 && shootingTime.seconds()>3.0){
+                            shootingState=1;
+                            Miller.indexerPower(80,Miller.leftIndexerServo);
+                            setScoringState(ScoringState.SHOOTING_LEFT);
+                        }else if(gamepad1.right_bumper && shootingState==0 && shootingTime.seconds()>3.0){
+                            shootingState=1;
+                            Miller.indexerPower(80,Miller.rightIndexerServo);
+                            setScoringState(ScoringState.SHOOTING_RIGHT);
+                        }else if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
+                            shootingState = 0;
+                        }
+                        break;
+            case SHOOTING_LEFT:
                         if(shootingTime.seconds()>1.0 && gamepad1.left_bumper && shootingState==0){
                             Miller.indexerPower(0.0,Miller.leftIndexerServo);
                             Miller.setShooterPower(0.0,Miller.leftShooterMotor);
@@ -144,7 +173,10 @@ public class ReggieTeleop_v1 extends OpMode {
         }
 
         telemetry.addData("Play Time: ", playTime.seconds() );
-
+        if(artifactScoringState == ScoringState.ACCELERATING_FAR){
+            telemetry.addData("Its Miller Time - ", "Shooting from Far Away!");
+        }
+        telemetry.addData("Current State:",artifactScoringState.toString());
 
 
 

@@ -58,7 +58,7 @@ public class Reggie {
 
 
     public void setShooterPower(double power, DcMotor shooter) {
-        shooter.setPower(power);
+        shooter.setPower(power*0.01);
     }
     public void setIntakePower(double power, DcMotor Intake) {
         Intake.setPower(power);
@@ -66,5 +66,5 @@ public class Reggie {
     public void setSorterServoPosition(double position) {
         sorterServo.setPosition(position);
     }
-    public void indexerPower(double power, CRServo indexer) {indexer.setPower(power);}
+    public void indexerPower(double power, CRServo indexer) {indexer.setPower(power*0.01);}
 }
