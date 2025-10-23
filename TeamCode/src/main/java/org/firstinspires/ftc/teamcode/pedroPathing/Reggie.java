@@ -41,7 +41,7 @@ public class Reggie {
 
         leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
+        rightIndexerServo.setDirection(DcMotorSimple.Direction.REVERSE);
         // Set all motors to zero power
         intakeMotor.setPower(0);
         leftShooterMotor.setPower(0);
@@ -57,8 +57,9 @@ public class Reggie {
     }
 
 
-    public void setShooterPower(double power, DcMotor shooter) {
-        shooter.setPower(power*0.01);
+    public void setShooterPower(double power) {
+        this.leftShooterMotor.setPower(power*0.01);
+        this.rightShooterMotor.setPower(power*0.01);
     }
     public void setIntakePower(double power, DcMotor Intake) {
         Intake.setPower(power);
