@@ -14,6 +14,7 @@
             <goBILDA5202SeriesMotor name="FL" port="3"/>
             <ContinuousRotationServo name="LServo" port="0"/>
             <Servo name="indServo" port="1"/>
+            <HuskyLens name="huskylens" port="1" />
         </LynxModule>
     </LynxUsbDevice>
 </Robot>

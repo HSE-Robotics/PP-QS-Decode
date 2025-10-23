@@ -1,10 +1,21 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.hardware.dfrobot.HuskyLens;
+
+
+import com.qualcomm.hardware.dfrobot.HuskyLens;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
+import java.util.concurrent.TimeUnit;
 
 public class Reggie {
 
@@ -15,6 +26,7 @@ public class Reggie {
     public Servo sorterServo = null;
     public CRServo leftIndexerServo = null;
     public CRServo rightIndexerServo = null;
+    public HuskyLens huskyLens = null;
 
     // HardwareMap object
     private HardwareMap hwMap = null;
@@ -39,6 +51,8 @@ public class Reggie {
         leftIndexerServo = hwMap.get(CRServo.class, "LServo");
         rightIndexerServo = hwMap.get(CRServo.class, "RServo");
 
+        huskyLens = hwMap.get(HuskyLens.class, "huskylens");
+
         leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         rightIndexerServo.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -51,6 +65,7 @@ public class Reggie {
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
 
         // Set servo initial position
         this.setSorterServoPosition(0.25); // Example initial position
@@ -68,4 +83,7 @@ public class Reggie {
         sorterServo.setPosition(position);
     }
     public void indexerPower(double power, CRServo indexer) {indexer.setPower(power*0.01);}
+
+
+
 }
