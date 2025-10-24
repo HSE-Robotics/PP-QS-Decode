@@ -26,7 +26,7 @@ public class Reggie {
     public Servo sorterServo = null;
     public CRServo leftIndexerServo = null;
     public CRServo rightIndexerServo = null;
-    public HuskyLens huskyLens = null;
+    public HuskyLens huskyLens;
 
     // HardwareMap object
     private HardwareMap hwMap = null;
@@ -69,8 +69,8 @@ public class Reggie {
 
         // Set servo initial position
         this.setSorterServoPosition(0.25); // Example initial position
-    }
 
+    }
 
     public void setShooterPower(double power) {
         this.leftShooterMotor.setPower(power*0.01);
@@ -83,6 +83,37 @@ public class Reggie {
         sorterServo.setPosition(position);
     }
     public void indexerPower(double power, CRServo indexer) {indexer.setPower(power*0.01);}
+
+    public int aim(HuskyLens hl) {
+        int Side = 0;
+        HuskyLens.Block[] blocks = huskyLens.blocks();
+        for (int i = 0; i < blocks.length; i++) {
+            if (blocks[i].id == 1) {
+                //RED
+                Side = 1;
+            }
+            if (blocks[i].id == 2) {
+                //Blue
+                Side = 2;
+            }
+
+            return Side;
+            /*
+             * Here inside the FOR loop, you could save or evaluate specific info for the currently recognized Bounding Box:
+             * - blocks[i].width and blocks[i].height   (size of box, in pixels)
+             * - blocks[i].left and blocks[i].top       (edges of box)
+             * - blocks[i].x and blocks[i].y            (center location)
+             * - blocks[i].id                           (Color ID)
+             *
+             * These values have Java type int (integer).
+             */
+        }
+
+        return Side;
+    }
+    public void shoot(double power){
+
+    }
 
 
 
