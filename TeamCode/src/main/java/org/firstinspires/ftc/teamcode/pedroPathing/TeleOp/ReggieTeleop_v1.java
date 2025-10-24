@@ -237,15 +237,17 @@ public class ReggieTeleop_v1 extends OpMode {
                 telemetry.addLine("NONE");
                 Side = 0;
             }
-            telemetry.addData("Side", Side);
 
-            telemetry.addData("Play Time: ", playTime.seconds());
-            if (artifactScoringState == ScoringState.ACCELERATING_FAR) {
-                telemetry.addData("Its Miller Time - ", "Shooting from Far Away!");
-            }
-            telemetry.addData("Current State:", artifactScoringState.toString());
 
         }
+
+        telemetry.addData("Side", Side);
+
+        telemetry.addData("Play Time: ", playTime.seconds());
+        if (artifactScoringState == ScoringState.ACCELERATING_FAR) {
+            telemetry.addData("Its Miller Time - ", "Shooting from Far Away!");
+        }
+        telemetry.addData("Current State:", artifactScoringState.toString());
 
         }
     public void endgameLED () {
