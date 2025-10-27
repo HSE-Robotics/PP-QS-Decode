@@ -1,21 +1,13 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 
-import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
-
-
-import com.qualcomm.hardware.dfrobot.HuskyLens;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.robotcore.internal.system.Deadline;
-import java.util.concurrent.TimeUnit;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Reggie {
 
@@ -27,6 +19,7 @@ public class Reggie {
     public CRServo leftIndexerServo = null;
     public CRServo rightIndexerServo = null;
     public HuskyLens huskyLens;
+    public ElapsedTime idlerTime;
 
     // HardwareMap object
     private HardwareMap hwMap = null;
@@ -52,6 +45,7 @@ public class Reggie {
         rightIndexerServo = hwMap.get(CRServo.class, "RServo");
 
         huskyLens = hwMap.get(HuskyLens.class, "huskylens");
+        idlerTime = new ElapsedTime();
 
         leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -82,10 +76,13 @@ public class Reggie {
     public void setSorterServoPosition(double position) {
         sorterServo.setPosition(position);
     }
-    public void indexerPower(double power, CRServo indexer) {indexer.setPower(power*0.01);}
+    public void indexerPower(double power, CRServo indexer) {
+        indexer.setPower(power*0.01);
+    }
 
-    public int aim(HuskyLens hl) {
+    public boolean aim(HuskyLens hl) {
         int Side = 0;
+        boolean fire = false;
         HuskyLens.Block[] blocks = huskyLens.blocks();
         for (int i = 0; i < blocks.length; i++) {
             if (blocks[i].id == 1) {
@@ -96,25 +93,65 @@ public class Reggie {
                 //Blue
                 Side = 2;
             }
-
-            return Side;
-            /*
-             * Here inside the FOR loop, you could save or evaluate specific info for the currently recognized Bounding Box:
-             * - blocks[i].width and blocks[i].height   (size of box, in pixels)
-             * - blocks[i].left and blocks[i].top       (edges of box)
-             * - blocks[i].x and blocks[i].y            (center location)
-             * - blocks[i].id                           (Color ID)
-             *
-             * These values have Java type int (integer).
-             */
+            if ((blocks[i].id == 1 || blocks[i].id == 2) && (blocks[i].width >= 44 && blocks[i].width <= 52 && blocks[i].height >= 44 && blocks[i].height <= 52))
+                fire = true;
+            else if (!(blocks[i].id == 1 || blocks[i].id == 2)){
+                fire = false;
+            }
         }
 
-        return Side;
+        return fire;
     }
-    public void shoot(double power){
+    public int order(HuskyLens hl) {
+        int orden = 0;
+        HuskyLens.Block[] blocks = huskyLens.blocks();
+        for (int i = 0; i < blocks.length; i++) {
+            if (blocks[i].id == 3) {
+                //PPG
+                orden = 1;
+            }
+            if (blocks[i].id == 4) {
+                //GPP
+                orden = 2;
+            }
+            if (blocks[i].id == 5){
+                //PGP
+                orden = 3;
+
+            }
+            else if (blocks[i].width != 44 && blocks[i].height != 44){
+            }
+        }
+
+        return orden;
+    }
+
+    public void shootOrder(){
+        idlerTime.reset();
+        idlerTime.startTime();
+        if(order(huskyLens) == 1){
+            indexerPower(100,leftIndexerServo);
+            if (idlerTime.time() >= 3.0){
+                indexerPower(100,rightIndexerServo);
+                indexerPower(0,leftIndexerServo);
+                if (idlerTime.time() >= 4.0){
+                    indexerPower(0,rightIndexerServo);
+                }
+
+            }
+
+        }
+    }
+
+    public void shootClose(){
+        if (aim(huskyLens)) {
+            setShooterPower(60);
+            shootOrder();
+        } else if (!aim(huskyLens)) {
+            setShooterPower(0);
+        }
 
     }
-
 
 
 }
