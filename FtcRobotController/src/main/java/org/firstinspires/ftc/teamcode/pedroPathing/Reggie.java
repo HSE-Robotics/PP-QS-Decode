@@ -146,7 +146,7 @@ public class Reggie {
     public void shootClose(){
         if (aim(huskyLens)) {
             setShooterPower(60);
-            shootOrder();
+            //shootOrder();
         } else if (!aim(huskyLens)) {
             setShooterPower(0);
         }

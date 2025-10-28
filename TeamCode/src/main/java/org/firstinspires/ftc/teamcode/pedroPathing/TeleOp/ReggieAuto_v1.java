@@ -61,6 +61,8 @@ public class ReggieAuto_v1 extends OpMode {
 
 
 
+
+
         // playTime.reset();
     }
 
@@ -70,6 +72,8 @@ public class ReggieAuto_v1 extends OpMode {
     @Override
     public void start() {
         follower.startTeleopDrive();
+        Miller.shootClose();
+
     }
 
     /**
