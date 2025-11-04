@@ -8,10 +8,14 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.util.Timer;
+
 
 public class Reggie {
 
     // Declare hardware components as public to be accessible in OpModes
+    private Timer pathTimer;
     public DcMotor intakeMotor = null;
     public DcMotor leftShooterMotor = null;
     public DcMotor rightShooterMotor = null;
@@ -55,11 +59,14 @@ public class Reggie {
         leftShooterMotor.setPower(0);
         rightShooterMotor.setPower(0);
 
+        pathTimer = new Timer();
+
         // Set all motors to run without encoders
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
+
 
         // Set servo initial position
         this.setSorterServoPosition(0.25); // Example initial position
@@ -109,6 +116,7 @@ public class Reggie {
             if (blocks[i].id == 3) {
                 //PPG
                 orden = 1;
+                PPG();
             }
             if (blocks[i].id == 4) {
                 //GPP
@@ -126,31 +134,34 @@ public class Reggie {
         return orden;
     }
 
-    public void shootOrder(){
-        idlerTime.reset();
-        idlerTime.startTime();
-        if(order(huskyLens) == 1){
-            indexerPower(100,leftIndexerServo);
-            if (idlerTime.time() >= 3.0){
-                indexerPower(100,rightIndexerServo);
-                indexerPower(0,leftIndexerServo);
-                if (idlerTime.time() >= 4.0){
-                    indexerPower(0,rightIndexerServo);
-                }
 
+    public void PPG(){
+        indexerPower(70, leftIndexerServo);
+        setIntakePower(100,intakeMotor);
+        setSorterServoPosition(1);
+        if(pathTimer.getElapsedTimeSeconds() >=5){
+            setSorterServoPosition(0);
+            indexerPower(80, rightIndexerServo);
+            if (pathTimer.getElapsedTimeSeconds() >= 7){
+                indexerPower(0, rightIndexerServo);
+                indexerPower(0, leftIndexerServo);
+                setShooterPower(0);
+                setIntakePower(0,intakeMotor);
             }
-
         }
     }
 
     public void shootClose(){
-        if (aim(huskyLens)) {
+
+        setShooterPower(60);
+
+        /*if (aim(huskyLens)) {
             setShooterPower(60);
-            //shootOrder();
-        } else if (!aim(huskyLens)) {
+            shootOrder();
+        } else{
             setShooterPower(0);
         }
-
+*/
     }
 
 
