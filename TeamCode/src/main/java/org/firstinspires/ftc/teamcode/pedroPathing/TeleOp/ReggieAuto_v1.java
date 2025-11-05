@@ -75,7 +75,7 @@ public class ReggieAuto_v1 extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
-        motif = order(Miller.huskyLens);
+        //motif = order(Miller.huskyLens);
 
         // playTime.reset();
     }
@@ -107,8 +107,8 @@ public class ReggieAuto_v1 extends OpMode {
                     break;
                 }
             case 11:
-                //motif = order(Miller.huskyLens);
-                if(pathTimer.getElapsedTimeSeconds() >= 2){
+                motif = order(Miller.huskyLens);
+                if(pathTimer.getElapsedTimeSeconds() >= 2 && (motif==1 || motif==2 || motif==3)){
 
                     setPathState(1);
                 }
