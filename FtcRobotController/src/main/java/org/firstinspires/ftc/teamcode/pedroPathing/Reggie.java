@@ -116,7 +116,6 @@ public class Reggie {
             if (blocks[i].id == 3) {
                 //PPG
                 orden = 1;
-                PPG();
             }
             if (blocks[i].id == 4) {
                 //GPP
@@ -155,14 +154,10 @@ public class Reggie {
 
         setShooterPower(60);
 
-        /*if (aim(huskyLens)) {
-            setShooterPower(60);
-            shootOrder();
-        } else{
-            setShooterPower(0);
+        if (order(huskyLens) == 1) {
+            PPG();
         }
-*/
+
+
     }
-
-
 }

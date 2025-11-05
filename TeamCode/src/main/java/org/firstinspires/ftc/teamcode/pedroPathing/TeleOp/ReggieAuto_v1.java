@@ -37,13 +37,13 @@ public class ReggieAuto_v1 extends OpMode {
     private Follower follower;
     private Reggie Miller;
     public static Pose startingPose;
-
+    public int motif;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
     private Path Start;
     private PathChain ReadPos, Score, grabPickup2;
     private final Pose startPose = new Pose(110, 122, Math.toRadians(135)); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(84, 90, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    private final Pose scorePose = new Pose(86, 95, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose scorePose1 = new Pose(84, 90, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose pickup1Pose = new Pose(86, 85, Math.toRadians(50)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose pickup1 = new Pose(90, 71, Math.toRadians(60)); // Highest (First Set) of Artifacts from the Spike Mark.
@@ -75,7 +75,7 @@ public class ReggieAuto_v1 extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
-
+        motif = order(Miller.huskyLens);
 
         // playTime.reset();
     }
@@ -98,21 +98,30 @@ public class ReggieAuto_v1 extends OpMode {
         switch (pathState) {
             case 0:
                 follower.setMaxPower(.7);
-                follower.followPath(ReadPos);
-                setPathState(1);
-                Miller.shootClose();
+                follower.followPath(ReadPos,true);
+                setPathState(11);
+
+                //Miller.shootClose();
                 if(pathTimer.getElapsedTimeSeconds() >= 6){
 
                     break;
                 }
+            case 11:
+                //motif = order(Miller.huskyLens);
+                if(pathTimer.getElapsedTimeSeconds() >= 2){
+
+                    setPathState(1);
+                }
+                break;
             case 1:
                 follower.setMaxPower(1);
+
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Score Preload */
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(Score,true);
-
+                    Miller.setShooterPower(60);
                     if(pathTimer.getElapsedTimeSeconds() >=3) {
                         setPathState(2);
                     }
@@ -120,10 +129,12 @@ public class ReggieAuto_v1 extends OpMode {
                 break;
             case 2:
                 if(!follower.isBusy() ){
-                    /*Miller.indexerPower(65, Miller.leftIndexerServo);
+                    if ( motif == 1) {
+
+                    Miller.indexerPower(65, Miller.leftIndexerServo);
                     Miller.setIntakePower(100,Miller.intakeMotor);
                     Miller.setSorterServoPosition(1);
-                    if(pathTimer.getElapsedTimeSeconds() >=3){
+                    if(pathTimer.getElapsedTimeSeconds() >= 3){
                         Miller.setSorterServoPosition(0);
                         Miller.indexerPower(80, Miller.rightIndexerServo);
                             if (pathTimer.getElapsedTimeSeconds() >= 7){
@@ -132,8 +143,9 @@ public class ReggieAuto_v1 extends OpMode {
                                 Miller.setShooterPower(0);
                                 Miller.setIntakePower(0,Miller.intakeMotor);
                             }
-                        }*/
-                    Miller.order(Miller.huskyLens);
+                        }
+                    }
+//                    Miller.shootClose();
                 }
                 if (pathTimer.getElapsedTimeSeconds() >= 15) {
                     break;
@@ -164,6 +176,20 @@ public class ReggieAuto_v1 extends OpMode {
         /**Pedro Pathing Driving
          *
          */
+
+            follower.update();
+            autonomousPathUpdate();
+            // Feedback to Driver Hub for debugging
+            telemetry.addData("motif", motif);
+            telemetry.addData("path state", pathState);
+            telemetry.addData("x", follower.getPose().getX());
+            telemetry.addData("y", follower.getPose().getY());
+            telemetry.addData("heading", follower.getPose().getHeading());
+            telemetry.update();
+
+        }
+
+    public int order(HuskyLens hl) {
         int orden = 0;
         HuskyLens.Block[] blocks = Miller.huskyLens.blocks();
         for (int i = 0; i < blocks.length; i++) {
@@ -175,21 +201,15 @@ public class ReggieAuto_v1 extends OpMode {
                 //GPP
                 orden = 2;
             }
-            if (blocks[i].id == 5) {
+            if (blocks[i].id == 5){
                 //PGP
                 orden = 3;
 
             }
-            follower.update();
-            autonomousPathUpdate();
-            // Feedback to Driver Hub for debugging
-            telemetry.addData("path state", pathState);
-            telemetry.addData("x", follower.getPose().getX());
-            telemetry.addData("y", follower.getPose().getY());
-            telemetry.addData("heading", follower.getPose().getHeading());
-            telemetry.addData("order", orden);
-            telemetry.update();
-
+            else if (blocks[i].width != 44 && blocks[i].height != 44){
+            }
         }
+
+        return orden;
     }
-}
+    }
