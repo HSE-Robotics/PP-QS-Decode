@@ -40,12 +40,16 @@ public class ReggieAuto_v1 extends OpMode {
     public int motif;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
+
+    double sortPositionMiddle = 0.45;
+    double sortPositionRight = 0.1;
+    double sortPositionLeft = 0.9;
     private Path Start;
     private PathChain ReadPos, Score, grabPickup2;
     private final Pose startPose = new Pose(110, 122, Math.toRadians(135)); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(86, 95, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    private final Pose scorePose = new Pose(83, 95, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose scorePose1 = new Pose(84, 90, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
-    private final Pose pickup1Pose = new Pose(86, 85, Math.toRadians(50)); // Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose pickup1Pose = new Pose(80, 78, Math.toRadians(50)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose pickup1 = new Pose(90, 71, Math.toRadians(60)); // Highest (First Set) of Artifacts from the Spike Mark.
 
 
@@ -121,7 +125,7 @@ public class ReggieAuto_v1 extends OpMode {
                     /* Score Preload */
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(Score,true);
-                    Miller.setShooterPower(60);
+                    Miller.setShooterPower(70);
                     if(pathTimer.getElapsedTimeSeconds() >=3) {
                         setPathState(2);
                     }
@@ -130,26 +134,92 @@ public class ReggieAuto_v1 extends OpMode {
             case 2:
                 if(!follower.isBusy() ){
                     if ( motif == 1) {
-
-                    Miller.indexerPower(65, Miller.leftIndexerServo);
-                    Miller.setIntakePower(100,Miller.intakeMotor);
-                    Miller.setSorterServoPosition(1);
-                    if(pathTimer.getElapsedTimeSeconds() >= 3){
-                        Miller.setSorterServoPosition(0);
-                        Miller.indexerPower(80, Miller.rightIndexerServo);
-                            if (pathTimer.getElapsedTimeSeconds() >= 7){
-                                Miller.indexerPower(0, Miller.rightIndexerServo);
-                                Miller.indexerPower(0, Miller.leftIndexerServo);
-                                Miller.setShooterPower(0);
-                                Miller.setIntakePower(0,Miller.intakeMotor);
-                            }
-                        }
+                        setPathState(3);
+                    }else if ( motif == 2) {
+                        setPathState(4);
+                    }else if ( motif == 3) {
+                        setPathState(5);
                     }
-//                    Miller.shootClose();
                 }
                 if (pathTimer.getElapsedTimeSeconds() >= 15) {
                     break;
                 }
+            case 3:
+                //PPG
+                Miller.setShooterPower(60);
+                Miller.indexerPower(65, Miller.leftIndexerServo);
+                Miller.setIntakePower(5,Miller.intakeMotor);
+                Miller.setSorterServoPosition(sortPositionLeft);
+                if(pathTimer.getElapsedTimeSeconds() >= 5){
+                    setPathState(31);
+                }
+                break;
+            case 31:
+                Miller.setShooterPower(70);
+                Miller.setSorterServoPosition(sortPositionRight);
+                Miller.indexerPower(80, Miller.rightIndexerServo);
+                if (pathTimer.getElapsedTimeSeconds() >= 7){
+                    setPathState(32);
+                }
+                break;
+            case 32:
+                Miller.indexerPower(0, Miller.rightIndexerServo);
+                Miller.indexerPower(0, Miller.leftIndexerServo);
+                Miller.setShooterPower(0);
+                Miller.setIntakePower(0,Miller.intakeMotor);
+                break;
+            case 4:
+                //GPP
+                Miller.indexerPower(80, Miller.rightIndexerServo);
+                Miller.indexerPower(0, Miller.leftIndexerServo);
+                //Miller.setIntakePower(100,Miller.intakeMotor);
+                Miller.setSorterServoPosition(.1);
+                if(pathTimer.getElapsedTimeSeconds() >= 5){
+                    setPathState(41);
+                    Miller.setShooterPower(60);
+                }
+                break;
+            case 41:
+                Miller.setIntakePower(100, Miller.intakeMotor);
+                Miller.setSorterServoPosition(sortPositionLeft);
+                Miller.indexerPower(65, Miller.leftIndexerServo);
+                if(pathTimer.getElapsedTimeSeconds() >= 5){
+                    //setPathState(42);
+                }
+                break;
+            case 42:
+                if (pathTimer.getElapsedTimeSeconds() >= 7){
+                    setPathState(32);
+                }
+                break;
+            case 5:
+                //PGP
+                Miller.setShooterPower(60);
+                Miller.indexerPower(65, Miller.leftIndexerServo);
+                //Miller.setIntakePower(100, Miller.intakeMotor);
+                Miller.setSorterServoPosition(1);
+                if (pathTimer.getElapsedTimeSeconds() >= 2) {
+                    setPathState(51);
+                }
+                break;
+            case 51:
+                Miller.setShooterPower(70);
+                Miller.setSorterServoPosition(0);
+                Miller.indexerPower(80, Miller.rightIndexerServo);
+                Miller.indexerPower(0, Miller.leftIndexerServo);
+                if (pathTimer.getElapsedTimeSeconds() >= 3) {
+                    //setPathState(52);
+                }
+                break;
+            case 52:
+                Miller.setShooterPower(60);
+                Miller.setSorterServoPosition(0);
+                Miller.indexerPower(80, Miller.rightIndexerServo);
+                Miller.indexerPower(0, Miller.leftIndexerServo);
+                if (pathTimer.getElapsedTimeSeconds() >= 7) {
+                    setPathState(32);
+                }
+                break;
         }
     }
     /** These change the states of the paths and actions. It will also reset the timers of the individual switches **/
