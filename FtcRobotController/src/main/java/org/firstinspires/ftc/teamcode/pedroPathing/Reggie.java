@@ -52,13 +52,13 @@ public class Reggie {
         idlerTime = new ElapsedTime();
 
         leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
         rightIndexerServo.setDirection(DcMotorSimple.Direction.REVERSE);
         // Set all motors to zero power
         intakeMotor.setPower(0);
         leftShooterMotor.setPower(0);
         rightShooterMotor.setPower(0);
-
+        //leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pathTimer = new Timer();
 
         // Set all motors to run without encoders
@@ -159,5 +159,12 @@ public class Reggie {
         }
 
 
+    }
+
+    public void stopEverything(){
+        this.setShooterPower(0);
+        this.leftIndexerServo.setPower(0);
+        this.rightIndexerServo.setPower(0);
+        this.intakeMotor.setPower(0);
     }
 }

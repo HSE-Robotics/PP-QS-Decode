@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import java.util.function.Supplier;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -36,6 +37,8 @@ import org.slf4j.LoggerFactory;
 public class ReggieTeleop_v1 extends OpMode {
     //private static final Logger log = LoggerFactory.getLogger(AyCrush2P_PP.class);
     //Pedro Pathing Variables
+    private ColorSensor colorSensorLeft;
+    private ColorSensor colorSensorRight;
     private Follower follower;
     private Reggie Miller;
     public static Pose startingPose;
@@ -57,11 +60,16 @@ public class ReggieTeleop_v1 extends OpMode {
     int shootingState = 0;
     public boolean inEndgame;
     public ElapsedTime shootingTime, playTime;
-
     double sortPositionMiddle = 0.45;
     double sortPositionRight = 0.25;
     double sortPositionLeft = 0.75;
     int Side = 0;
+    int rRed;
+    int rGreen;
+    int rBlue;
+    int lRed;
+    int lGreen;
+    int lBlue;
 
 
     /**
@@ -80,6 +88,9 @@ public class ReggieTeleop_v1 extends OpMode {
         shootingTime = new ElapsedTime();
         playTime = new ElapsedTime();
         inEndgame = false;
+
+        colorSensorLeft = hardwareMap.get(ColorSensor.class, "colorSensorLeft");
+        colorSensorRight = hardwareMap.get(ColorSensor.class, "colorSensorRight");
 
 
         // playTime.reset();
@@ -105,6 +116,13 @@ public class ReggieTeleop_v1 extends OpMode {
          */
         follower.update();
         follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+
+        lBlue = colorSensorLeft.blue();
+        lGreen = colorSensorLeft.green();
+        lRed = colorSensorLeft.red();
+        rBlue = colorSensorRight.blue();
+        rGreen = colorSensorRight.green();
+        rRed = colorSensorRight.red();
 
 
 
@@ -219,8 +237,8 @@ public class ReggieTeleop_v1 extends OpMode {
 
         //General code for both options (1 or 2 Players)
         if (playTime.seconds() > 40 && !inEndgame) {
-            gamepad1.rumble(3000);
-            gamepad2.rumble(3000);
+            //gamepad1.rumble(3000);
+            //gamepad2.rumble(3000);
             endgameLED();
             inEndgame = true;
         }
@@ -252,7 +270,15 @@ public class ReggieTeleop_v1 extends OpMode {
         }
         telemetry.addData("Current State:", artifactScoringState.toString());
 
+        telemetry.addData("Left Blue:",lBlue);
+        telemetry.addData("Left Green:",lGreen);
+        telemetry.addData("Left Red:",lRed);
+        telemetry.addData("Right Blue:",rBlue);
+        telemetry.addData("Right Green:",rGreen);
+        telemetry.addData("Right Red:",rRed);
         }
+
+
     public void endgameLED () {
         gamepad1.setLedColor(255, 0, 0, 500);
         gamepad2.setLedColor(0, 0, 255, 500);

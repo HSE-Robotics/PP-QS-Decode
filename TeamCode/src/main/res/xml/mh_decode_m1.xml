@@ -7,6 +7,7 @@
             <goBILDA5202SeriesMotor name="FR" port="3"/>
             <ContinuousRotationServo name="RServo" port="0"/>
             <goBILDAPinpoint name="pinpoint" port="0" bus="0"/>
+            <RevColorSensorV3 name="colorSensorRight" port="1"/>
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="LS" port="1"/>
@@ -15,6 +16,7 @@
             <ContinuousRotationServo name="LServo" port="0"/>
             <Servo name="indServo" port="1"/>
             <HuskyLens name="huskylens" port="1" />
+            <RevColorSensorV3 name="colorSensorLeft" port="2"/>
         </LynxModule>
     </LynxUsbDevice>
 </Robot>
