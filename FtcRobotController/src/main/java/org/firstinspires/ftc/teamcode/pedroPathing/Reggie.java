@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,16 +18,26 @@ public class Reggie {
     // Declare hardware components as public to be accessible in OpModes
     private Timer pathTimer;
     public DcMotor intakeMotor = null;
-    public DcMotor leftShooterMotor = null;
-    public DcMotor rightShooterMotor = null;
+    public DcMotorEx leftShooterMotor = null;
+    public DcMotorEx rightShooterMotor = null;
     public Servo sorterServo = null;
+    public Servo rightStopper = null;
+    public Servo leftStopper = null;
     public CRServo leftIndexerServo = null;
     public CRServo rightIndexerServo = null;
     public HuskyLens huskyLens;
     public ElapsedTime idlerTime;
 
+    public final double TARGET_VELOCITY = 1250;
+    public final double TARGET_MIN_VELOCITY = 1100;
+
+    public double sortPositionMiddle = 0.45;
+    public double sortPositionRight = 0.05;
+    public double sortPositionLeft = 0.9;
+
     // HardwareMap object
     private HardwareMap hwMap = null;
+
 
     /* Constructor */
     public Reggie() {
@@ -40,11 +51,13 @@ public class Reggie {
         // Define and Initialize Motors
 
         intakeMotor = hwMap.get(DcMotor.class, "int");
-        leftShooterMotor = hwMap.get(DcMotor.class, "LS");
-        rightShooterMotor = hwMap.get(DcMotor.class, "RS");
+        leftShooterMotor = hwMap.get(DcMotorEx.class, "LS");
+        rightShooterMotor = hwMap.get(DcMotorEx.class, "RS");
 
         // Define and Initialize Servos
         sorterServo = hwMap.get(Servo.class, "indServo");
+        rightStopper = hwMap.get(Servo.class, "RStopper");
+        leftStopper = hwMap.get(Servo.class, "LStopper");
         leftIndexerServo = hwMap.get(CRServo.class, "LServo");
         rightIndexerServo = hwMap.get(CRServo.class, "RServo");
 
@@ -52,7 +65,7 @@ public class Reggie {
         idlerTime = new ElapsedTime();
 
         leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightIndexerServo.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftIndexerServo.setDirection(DcMotorSimple.Direction.REVERSE);
         // Set all motors to zero power
         intakeMotor.setPower(0);
         leftShooterMotor.setPower(0);
@@ -63,13 +76,13 @@ public class Reggie {
 
         // Set all motors to run without encoders
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
 
 
         // Set servo initial position
-        this.setSorterServoPosition(0.25); // Example initial position
+        this.setSorterServoPosition(this.sortPositionMiddle); // Example initial position
 
     }
 
@@ -77,11 +90,20 @@ public class Reggie {
         this.leftShooterMotor.setPower(power*0.01);
         this.rightShooterMotor.setPower(power*0.01);
     }
+    public void setShooterVelocity(double velocity) {
+        this.leftShooterMotor.setVelocity(velocity);
+        this.rightShooterMotor.setVelocity(velocity);
+    }
+
     public void setIntakePower(double power, DcMotor Intake) {
         Intake.setPower(power);
     }
     public void setSorterServoPosition(double position) {
         sorterServo.setPosition(position);
+    }
+    public void setStoppers(double rp, double lp) {
+        rightStopper.setPosition(rp);
+        leftStopper.setPosition(lp);
     }
     public void indexerPower(double power, CRServo indexer) {
         indexer.setPower(power*0.01);
@@ -112,21 +134,20 @@ public class Reggie {
     public int order(HuskyLens hl) {
         int orden = 0;
         HuskyLens.Block[] blocks = huskyLens.blocks();
-        for (int i = 0; i < blocks.length; i++) {
-            if (blocks[i].id == 3) {
+        for (HuskyLens.Block block : blocks) {
+            if (block.id == 3) {
                 //PPG
                 orden = 1;
             }
-            if (blocks[i].id == 4) {
+            if (block.id == 4) {
                 //GPP
                 orden = 2;
             }
-            if (blocks[i].id == 5){
+            if (block.id == 5) {
                 //PGP
                 orden = 3;
 
-            }
-            else if (blocks[i].width != 44 && blocks[i].height != 44){
+            } else if (block.width != 44 && block.height != 44) {
             }
         }
 

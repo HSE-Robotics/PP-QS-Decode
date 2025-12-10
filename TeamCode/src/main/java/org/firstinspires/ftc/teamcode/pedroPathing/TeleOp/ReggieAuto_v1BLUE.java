@@ -40,7 +40,7 @@ public class ReggieAuto_v1BLUE extends OpMode {
     int artifact;
     double sortPositionMiddle = 0.45;
     double sortPositionRight = 0.1;
-    double sortPositionLeft = 0.65;
+    double sortPositionLeft = 0.7;
     private Path Start;
     public PathChain ReadPos, Score,Score2, grab2Pickup1,grab2Pickup12,grab2Pickup12R,grab2Pickup13,grab2Pickup13R,grab2Pickup14,grab2Pickup14R,pickup2Score,grabToPickup1;
     private final Pose startPose = new Pose(21, 124, Math.toRadians(54)); // Start Pose of our robot.
@@ -260,7 +260,7 @@ public class ReggieAuto_v1BLUE extends OpMode {
                 Miller.indexerPower(50, Miller.leftIndexerServo);
                 //Miller.setIntakePower(100, Miller.intakeMotor);
                 Miller.setSorterServoPosition(sortPositionLeft);
-                if (pathTimer.getElapsedTimeSeconds() >= 2) {
+                if (pathTimer.getElapsedTimeSeconds() >= 1) {
                     setPathState(51);
                 }
                 break;
@@ -269,7 +269,7 @@ public class ReggieAuto_v1BLUE extends OpMode {
                 Miller.setSorterServoPosition(sortPositionRight);
                 Miller.indexerPower(80, Miller.rightIndexerServo);
                 Miller.indexerPower(0, Miller.leftIndexerServo);
-                if (pathTimer.getElapsedTimeSeconds() >= 2) {
+                if (pathTimer.getElapsedTimeSeconds() >= 1.75) {
                     setPathState(52);
                     Miller.setIntakePower(80, Miller.intakeMotor);
                 }
@@ -279,7 +279,7 @@ public class ReggieAuto_v1BLUE extends OpMode {
                 Miller.setSorterServoPosition(sortPositionLeft);
                 Miller.indexerPower(0, Miller.rightIndexerServo);
                 Miller.indexerPower(80, Miller.leftIndexerServo);
-                if (pathTimer.getElapsedTimeSeconds() >= 2) {
+                if (pathTimer.getElapsedTimeSeconds() >= 3) {
                     setPathState(32);
                 }
                 break;
@@ -345,7 +345,7 @@ public class ReggieAuto_v1BLUE extends OpMode {
                     artifact = 1;
                     Miller.indexerPower(-50,Miller.leftIndexerServo);
                     Miller.setShooterPower(50);
-                    if (pathTimer.getElapsedTimeSeconds() >= 2) {
+                    if (pathTimer.getElapsedTimeSeconds() >= 3) {
                         setPathState(22);
                         follower.setMaxPower(1);
                     }
