@@ -55,8 +55,8 @@ public class ReggieAuto_v2 extends OpMode {
     private final Pose aimingFirstBallTopRowPose = new Pose(100, 74, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickFirstBallTopRowPose = new Pose(108, 74, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickSecondBallTopRowPose = new Pose(113, 74, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallTopRowPose = new Pose(123, 85, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallTopRowControlPose = new Pose(92, 85, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickThirdBallTopRowPose = new Pose(123, 82, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickThirdBallTopRowControlPose = new Pose(92, 82, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose aimingFirstBallMiddleRowPose = new Pose(100, 59, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickFirstBallMiddleRowPose = new Pose(108, 59, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickSecondBallMiddleRowPose = new Pose(113, 59, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
