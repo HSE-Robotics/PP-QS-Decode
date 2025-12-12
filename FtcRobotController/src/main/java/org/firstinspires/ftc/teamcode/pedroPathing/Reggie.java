@@ -108,6 +108,7 @@ public class Reggie {
 
     }
 
+    //Start the two Shooter Motors
     public void setShooterPower(double power) {
         this.leftShooterMotor.setPower(power*0.01);
         this.rightShooterMotor.setPower(power*0.01);

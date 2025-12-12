@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing.TeleOp;
 //import com.bylazar.telemetry.PanelsTelemetry;
 //import com.bylazar.telemetry.TelemetryManager;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -21,8 +22,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Reggie;
 /**
  *
  * @author Gerry DLIII - 18908 Mighty Hawks
- * @version 1.0, 02/11/2024
+ * @version 1.3, 12/11/2025
  */
+@Configurable
 @Autonomous(name = "Reggie_Auto_RED_LM3_Tournament", group = "LM3/TOUR Reggie")
 public class ReggieAuto_v2 extends OpMode {
     //private static final Logger log = LoggerFactory.getLogger(AyCrush2P_PP.class);
@@ -44,6 +46,29 @@ public class ReggieAuto_v2 extends OpMode {
         BOTTOM_ROW
     }
     Rows currentRow = Rows.TOP_ROW;
+
+    /**
+     *
+     * Configurable Variables Start Here
+     *
+     */
+
+    public static double yTopRowPurple = 74;
+    public static double yTopRowGreen = 82;
+
+    public static double yMidRowPurple = 50;
+    public static double yMidRowGreen = 58;
+    public static double yBotRowPurple = 26;
+    public static double yBotRowGreen = 34;
+
+
+
+
+    /**
+     *
+     * Paths Start here
+     *
+     */
     private Path Start;
     private PathChain ReadPath, ScorePath, aimingFirstBallTopRowPath, pickFirstBallTopRowPath, pickSecondBallTopRowPath,
                       pickThirdBallTopRowPath, grabPickup2,forward, scoreFromTopRowPath, scoreFromMiddleRowPath;
@@ -52,15 +77,16 @@ public class ReggieAuto_v2 extends OpMode {
     private final Pose scorePose = new Pose(90, 95, Math.toRadians(28)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose scorePoseSecond = new Pose(92, 97, Math.toRadians(38)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose scorePoseThird = new Pose(90, 95, Math.toRadians(30)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose aimingFirstBallTopRowPose = new Pose(100, 74, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickFirstBallTopRowPose = new Pose(108, 74, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickSecondBallTopRowPose = new Pose(113, 74, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallTopRowPose = new Pose(123, 82, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallTopRowControlPose = new Pose(92, 82, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose aimingFirstBallMiddleRowPose = new Pose(100, 59, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickFirstBallMiddleRowPose = new Pose(108, 59, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickSecondBallMiddleRowPose = new Pose(113, 59, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallMiddleRowPose = new Pose(122, 59, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose aimingFirstBallTopRowPose = new Pose(100, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickFirstBallTopRowPose = new Pose(108, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickSecondBallTopRowPose = new Pose(113, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickThirdBallTopRowPose = new Pose(123, yTopRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickThirdBallTopRowControlPose = new Pose(92, yTopRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose aimingFirstBallMiddleRowPose = new Pose(100, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickFirstBallMiddleRowPose = new Pose(108, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickSecondBallMiddleRowPose = new Pose(113, yMidRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickSecondBallMiddleRowControlPose = new Pose(92, yMidRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickThirdBallMiddleRowPose = new Pose(122, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose scorePose1 = new Pose(84, 90, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose pickup1Pose = new Pose(82, 80, Math.toRadians(50)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose pickup1 = new Pose(90, 74, Math.toRadians(360)); // Highest (First Set) of Artifacts from the Spike Mark.
