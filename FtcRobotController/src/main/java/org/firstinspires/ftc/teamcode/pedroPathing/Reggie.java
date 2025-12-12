@@ -12,6 +12,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.util.Timer;
 
+import java.util.EnumMap;
+import java.util.Objects;
+
 
 public class Reggie {
 
@@ -28,12 +31,31 @@ public class Reggie {
     public HuskyLens huskyLens;
     public ElapsedTime idlerTime;
 
-    public final double TARGET_VELOCITY = 1250;
-    public final double TARGET_MIN_VELOCITY = 1100;
+    public enum StoppersStates{
+        STOP,
+        PASS
+    }
+    StoppersStates stoppersStates = StoppersStates.STOP;
+    public final double TARGET_VELOCITY_LEFT = 1150;
+    public final double TARGET_VELOCITY_RIGHT = 1000;
+    public final double TARGET_MIN_VELOCITY_LEFT = 1200;
+    public final double TARGET_MIN_VELOCITY_RIGHT = 1000;
 
+    public enum SIDES{
+        RIGHT,
+        LEFT
+    }
+
+    public SIDES shootingSide = SIDES.RIGHT;
     public double sortPositionMiddle = 0.45;
     public double sortPositionRight = 0.05;
     public double sortPositionLeft = 0.9;
+
+    // FIND THIS VALUES
+    public double leftStopperSTOP = 0.85;
+    public double leftStopperPASS = 0.6;
+    public double rightStopperPASS = 0.6;
+    public double rightStopperSTOP = 0.2;
 
     // HardwareMap object
     private HardwareMap hwMap = null;
@@ -90,9 +112,21 @@ public class Reggie {
         this.leftShooterMotor.setPower(power*0.01);
         this.rightShooterMotor.setPower(power*0.01);
     }
-    public void setShooterVelocity(double velocity) {
-        this.leftShooterMotor.setVelocity(velocity);
-        this.rightShooterMotor.setVelocity(velocity);
+    public void setShooterVelocity(SIDES side) {
+        switch (side){
+            case RIGHT:
+                this.leftShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_RIGHT);
+                this.rightShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_RIGHT);
+                break;
+            case LEFT:
+                this.leftShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_LEFT);
+                this.rightShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_LEFT);
+                break;
+            default:
+                this.leftShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_RIGHT);
+                this.rightShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_RIGHT);
+                break;
+        }
     }
 
     public void setIntakePower(double power, DcMotor Intake) {
@@ -101,9 +135,10 @@ public class Reggie {
     public void setSorterServoPosition(double position) {
         sorterServo.setPosition(position);
     }
-    public void setStoppers(double rp, double lp) {
-        rightStopper.setPosition(rp);
-        leftStopper.setPosition(lp);
+    public void setStoppers(boolean rp, boolean lp) {
+        if(rp)  rightStopper.setPosition(rightStopperSTOP); else rightStopper.setPosition(rightStopperPASS);
+        if(lp)  leftStopper.setPosition(leftStopperSTOP); else leftStopper.setPosition(leftStopperPASS);
+
     }
     public void indexerPower(double power, CRServo indexer) {
         indexer.setPower(power*0.01);
@@ -187,5 +222,13 @@ public class Reggie {
         this.leftIndexerServo.setPower(0);
         this.rightIndexerServo.setPower(0);
         this.intakeMotor.setPower(0);
+    }
+
+
+    public boolean targetVelocityAcquired(SIDES side){
+        if (side == SIDES.LEFT) {
+            return leftShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_LEFT && rightShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_LEFT;
+        }
+        return leftShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_RIGHT && rightShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_RIGHT;
     }
 }

@@ -137,7 +137,6 @@ public class ReggieAuto_v1 extends OpMode {
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(Score,true);
 //                    Miller.setShooterPower(100);
-                    Miller.setShooterVelocity(Miller.TARGET_VELOCITY);
                     setPathState(2);
                 }
                 break;
@@ -146,7 +145,7 @@ public class ReggieAuto_v1 extends OpMode {
                     if ( motif == 1) {
                         setPathState(3);
                     }else if ( motif == 2) {
-                        Miller.setShooterVelocity(Miller.TARGET_VELOCITY);
+                        Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
                         setPathState(4);
                     }else if ( motif == 3) {
                         setPathState(5);
@@ -184,7 +183,7 @@ public class ReggieAuto_v1 extends OpMode {
             case 4:
                 //GPP
                 //Miller.setShooterPower(GShoot);
-                if(Miller.leftShooterMotor.getVelocity() > Miller.TARGET_MIN_VELOCITY && Miller.rightShooterMotor.getVelocity() > Miller.TARGET_MIN_VELOCITY ){
+                if(Miller.leftShooterMotor.getVelocity() > Miller.TARGET_MIN_VELOCITY_RIGHT && Miller.rightShooterMotor.getVelocity() > Miller.TARGET_MIN_VELOCITY_RIGHT ){
                     setPathState(401);
                 }
                 break;
@@ -200,7 +199,7 @@ public class ReggieAuto_v1 extends OpMode {
                 }
                 break;
             case 402:
-                if(Miller.leftShooterMotor.getVelocity() > Miller.TARGET_MIN_VELOCITY && Miller.rightShooterMotor.getVelocity() > Miller.TARGET_MIN_VELOCITY ){
+                if(Miller.leftShooterMotor.getVelocity() > Miller.TARGET_MIN_VELOCITY_LEFT && Miller.rightShooterMotor.getVelocity() > Miller.TARGET_MIN_VELOCITY_LEFT ){
                     setPathState(41);
                 }
                 break;
@@ -217,7 +216,7 @@ public class ReggieAuto_v1 extends OpMode {
                 }
                 break;
             case 411:
-                if(Miller.leftShooterMotor.getVelocity() > Miller.TARGET_MIN_VELOCITY && Miller.rightShooterMotor.getVelocity() > Miller.TARGET_MIN_VELOCITY ){
+                if(Miller.leftShooterMotor.getVelocity() > Miller.TARGET_MIN_VELOCITY_LEFT && Miller.rightShooterMotor.getVelocity() > Miller.TARGET_MIN_VELOCITY_LEFT ){
                     setPathState(412);
                 }
                 break;
