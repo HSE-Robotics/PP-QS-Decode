@@ -89,8 +89,8 @@ public class ReggieTeleop_v1 extends OpMode {
         playTime = new ElapsedTime();
         inEndgame = false;
 
-        colorSensorLeft = hardwareMap.get(ColorSensor.class, "colorSensorLeft");
-        colorSensorRight = hardwareMap.get(ColorSensor.class, "colorSensorRight");
+        //colorSensorLeft = hardwareMap.get(ColorSensor.class, "colorSensorLeft");
+        //colorSensorRight = hardwareMap.get(ColorSensor.class, "colorSensorRight");
 
 
         // playTime.reset();

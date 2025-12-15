@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.TeleOp;
+package org.firstinspires.ftc.teamcode.pedroPathing.Autonomous;
 //import com.bylazar.configurables.annotations.Configurable;
 //import com.bylazar.telemetry.PanelsTelemetry;
 //import com.bylazar.telemetry.TelemetryManager;
@@ -22,8 +22,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Reggie;
  * @author Gerry DLIII - 18908 Mighty Hawks
  * @version 1.0, 02/11/2024
  */
-@Autonomous(name = "Reggie_Auto_RED_FAR", group = "LM1 Reggie")
-public class ReggieAutoFAR_v1RED extends OpMode {
+@Autonomous(name = "Reggie_Auto_BLUE_FAR", group = "LM1 Reggie")
+public class ReggieAutoFAR_v1BLUE extends OpMode {
     //private static final Logger log = LoggerFactory.getLogger(AyCrush2P_PP.class);
     //Pedro Pathing Variables
     private Follower follower;
@@ -41,10 +41,10 @@ public class ReggieAutoFAR_v1RED extends OpMode {
     double sortPositionLeft = 0.65;
     private Path Start;
     public PathChain ReadPos, Score, Park;
-    private final Pose startPose = new Pose(82, 9, Math.toRadians(90)); // Start Pose of our robot.
-    private final Pose readPos = new Pose(82, 36, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
-    private final Pose scorePose = new Pose(88, 18, Math.toRadians(64)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose park = new Pose(109, 14, Math.toRadians(0)); // Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose startPose = new Pose(62, 9, Math.toRadians(90)); // Start Pose of our robot.
+    private final Pose readPos = new Pose(62, 36, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    private final Pose scorePose = new Pose(58, 18, Math.toRadians(112)); // Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose park = new Pose(34, 14, Math.toRadians(180)); // Highest (First Set) of Artifacts from the Spike Mark.
 
 
 
@@ -142,7 +142,7 @@ public class ReggieAutoFAR_v1RED extends OpMode {
             case 3:
                 //PPG
                 Miller.indexerPower(0,Miller.leftIndexerServo);
-                Miller.setShooterPower(shooterPower - 5);
+                Miller.setShooterPower(shooterPower);
                 Miller.indexerPower(65, Miller.leftIndexerServo);
                 Miller.setIntakePower(65,Miller.intakeMotor);
                 Miller.setSorterServoPosition(sortPositionLeft);

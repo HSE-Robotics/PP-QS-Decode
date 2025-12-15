@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.TeleOp;
+package org.firstinspires.ftc.teamcode.pedroPathing.Autonomous;
 //import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.ftccommon.SoundPlayer;
 //import com.bylazar.telemetry.PanelsTelemetry;
 //import com.bylazar.telemetry.TelemetryManager;
 
@@ -10,8 +9,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-import com.qualcomm.ftccommon.SoundPlayer;
-import com.qualcomm.hardware.dfrobot.HuskyLens;
+        import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 

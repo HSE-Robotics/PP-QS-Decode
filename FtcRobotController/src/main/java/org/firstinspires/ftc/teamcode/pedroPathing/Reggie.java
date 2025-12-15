@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
-
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -30,6 +30,8 @@ public class Reggie {
     public CRServo rightIndexerServo = null;
     public HuskyLens huskyLens;
     public ElapsedTime idlerTime;
+    public ColorSensor rightColorSensor = null;
+    public ColorSensor leftColorSensor = null;
 
     public enum StoppersStates{
         STOP,
@@ -83,7 +85,12 @@ public class Reggie {
         leftIndexerServo = hwMap.get(CRServo.class, "LServo");
         rightIndexerServo = hwMap.get(CRServo.class, "RServo");
 
+        //Define and Initialize Sensors
         huskyLens = hwMap.get(HuskyLens.class, "huskylens");
+        rightColorSensor = hwMap.get(ColorSensor.class, "colorSensorRight");
+        leftColorSensor = hwMap.get(ColorSensor.class, "colorSensorLeft");
+
+
         idlerTime = new ElapsedTime();
 
         leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -100,7 +107,10 @@ public class Reggie {
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Set all Sensors
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
+
 
 
         // Set servo initial position
@@ -114,19 +124,12 @@ public class Reggie {
         this.rightShooterMotor.setPower(power*0.01);
     }
     public void setShooterVelocity(SIDES side) {
-        switch (side){
-            case RIGHT:
-                this.leftShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_RIGHT);
-                this.rightShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_RIGHT);
-                break;
-            case LEFT:
-                this.leftShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_LEFT);
-                this.rightShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_LEFT);
-                break;
-            default:
-                this.leftShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_RIGHT);
-                this.rightShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_RIGHT);
-                break;
+        if (side == SIDES.LEFT) {
+            this.leftShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_LEFT);
+            this.rightShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_LEFT);
+        } else {
+            this.leftShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_RIGHT);
+            this.rightShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_RIGHT);
         }
     }
 

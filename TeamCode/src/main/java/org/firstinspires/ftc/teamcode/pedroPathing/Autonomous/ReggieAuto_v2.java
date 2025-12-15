@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.TeleOp;
+package org.firstinspires.ftc.teamcode.pedroPathing.Autonomous;
 //import com.bylazar.configurables.annotations.Configurable;
 //import com.bylazar.telemetry.PanelsTelemetry;
 //import com.bylazar.telemetry.TelemetryManager;
@@ -539,6 +539,7 @@ public class ReggieAuto_v2 extends OpMode {
             telemetry.addData("heading", follower.getPose().getHeading());
             telemetry.addData("shooter power Left", Miller.leftShooterMotor.getPower());
             telemetry.addData("shooter power Right", Miller.rightShooterMotor.getPower());
+            telemetry.addData("Right Sensor Distance:", Miller.rightColorSensor.getDistance());
             telemetry.update();
 
         }
