@@ -53,8 +53,8 @@ public class ReggieAuto_v2 extends OpMode {
      *
      */
 
-    public static double yTopRowPurple = 74;
-    public static double yTopRowGreen = 82;
+    public static double yTopRowPurple = 76;
+    public static double yTopRowGreen = 78;
 
     public static double yMidRowPurple = 50;
     public static double yMidRowGreen = 58;
@@ -75,13 +75,14 @@ public class ReggieAuto_v2 extends OpMode {
     private final Pose startPose = new Pose(125, 118, Math.toRadians(127)); // Start Pose of our robot.
     private final Pose readPose = new Pose(93, 95, Math.toRadians(105)); // Reading Obelisk Pose of our robot. It is facing the obelisk at 127 degree angle.
     private final Pose scorePose = new Pose(90, 95, Math.toRadians(28)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose scorePoseSecond = new Pose(92, 97, Math.toRadians(38)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose scorePoseSecond = new Pose(92, 93, Math.toRadians(40)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose scorePoseSecondControl = new Pose(92, 80, Math.toRadians(40)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose scorePoseThird = new Pose(90, 95, Math.toRadians(30)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose aimingFirstBallTopRowPose = new Pose(100, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickFirstBallTopRowPose = new Pose(108, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickSecondBallTopRowPose = new Pose(113, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallTopRowPose = new Pose(123, yTopRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallTopRowControlPose = new Pose(92, yTopRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickFirstBallTopRowPose = new Pose(104, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickSecondBallTopRowPose = new Pose(112, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickThirdBallTopRowPose = new Pose(124, yTopRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickThirdBallTopRowControlPose = new Pose(100, yTopRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose aimingFirstBallMiddleRowPose = new Pose(100, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickFirstBallMiddleRowPose = new Pose(108, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickSecondBallMiddleRowPose = new Pose(113, yMidRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
@@ -163,7 +164,7 @@ public class ReggieAuto_v2 extends OpMode {
 
         /* Drive to Score from the Third ball from top row */
         scoreFromTopRowPath = follower.pathBuilder()
-                .addPath(new BezierLine(pickThirdBallTopRowPose, scorePoseSecond))
+                .addPath(new BezierCurve(pickThirdBallTopRowPose, scorePoseSecondControl ,scorePoseSecond))
                 .setLinearHeadingInterpolation(pickThirdBallTopRowPose.getHeading(),scorePoseSecond.getHeading())
                 .build();
 
@@ -199,7 +200,7 @@ public class ReggieAuto_v2 extends OpMode {
                 break;
             case 11:
                 motif = order(Miller.huskyLens);
-                if(pathTimer.getElapsedTimeSeconds() >= 2 && (motif==1 || motif==2 || motif==3)){
+                if(pathTimer.getElapsedTimeSeconds() >= 1 && (motif==1 || motif==2 || motif==3)){
 
                     setPathState(1);
                 }
@@ -302,7 +303,7 @@ public class ReggieAuto_v2 extends OpMode {
                 Miller.setSorterServoPosition(sortPositionLeft);
                 Miller.indexerPower(85, Miller.leftIndexerServo);
                 Miller.indexerPower(0, Miller.rightIndexerServo);
-                if(pathTimer.getElapsedTimeSeconds() >= 1.05){
+                if(pathTimer.getElapsedTimeSeconds() >= 0.8){
                     Miller.setIntakePower(0, Miller.intakeMotor);
                     //Miller.setSorterServoPosition(sortPositionLeft);
                     Miller.indexerPower(0, Miller.leftIndexerServo);
@@ -324,7 +325,7 @@ public class ReggieAuto_v2 extends OpMode {
                 Miller.setIntakePower(75, Miller.intakeMotor);
                 Miller.setSorterServoPosition(sortPositionLeft);
                 Miller.indexerPower(85, Miller.leftIndexerServo);
-                if(pathTimer.getElapsedTimeSeconds() >= 1.25){
+                if(pathTimer.getElapsedTimeSeconds() >= 0.8){
                     switch (currentRow){
                         case TOP_ROW:
                             Miller.setSorterServoPosition(Miller.sortPositionLeft);
@@ -349,11 +350,11 @@ public class ReggieAuto_v2 extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() > 0.25){
                     Miller.stopEverything();
                 }
-                if (pathTimer.getElapsedTimeSeconds() >= 1.25){
+                if (pathTimer.getElapsedTimeSeconds() >= 1.0){
                     follower.followPath(aimingFirstBallTopRowPath, 0.8,true);
                     Miller.setSorterServoPosition(sortPositionRight);
                     Miller.setIntakePower(75,Miller.intakeMotor);
-                    //Miller.setStoppers(true, true);
+                    Miller.setStoppers(false, true);
                     setPathState(207);
                 }
                 break;
@@ -412,6 +413,7 @@ public class ReggieAuto_v2 extends OpMode {
                  * Retrieve the Green Ball From Top Row
                  */
                 if (!follower.isBusy()){
+                    Miller.setSorterServoPosition(sortPositionLeft);
                     follower.followPath(pickThirdBallTopRowPath, 0.45,true);
                     Miller.setIntakePower(75,Miller.intakeMotor);
                     Miller.indexerPower(-10, Miller.leftIndexerServo);
@@ -424,7 +426,8 @@ public class ReggieAuto_v2 extends OpMode {
                  */
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>1.25){
                     Miller.setSorterServoPosition(sortPositionLeft);
-                    Miller.setStoppers(false, false);
+                    Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
+                    //Miller.setStoppers(false, false);
                     setPathState(214);
                 }
                 break;
@@ -432,10 +435,11 @@ public class ReggieAuto_v2 extends OpMode {
                 /**
                  * Drive to Score Position after retrieving Top Row
                  */
+                follower.setMaxPower(0.9);
                 if (!follower.isBusy()){
                     follower.followPath(scoreFromTopRowPath, 0.8,true);
                     //Miller.stopEverything();
-                    Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
+
                     setPathState(215);
                 }
                 break;

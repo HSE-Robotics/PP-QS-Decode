@@ -36,10 +36,10 @@ public class Reggie {
         PASS
     }
     StoppersStates stoppersStates = StoppersStates.STOP;
-    public final double TARGET_VELOCITY_LEFT = 1150;
-    public final double TARGET_VELOCITY_RIGHT = 1000;
-    public final double TARGET_MIN_VELOCITY_LEFT = 1200;
-    public final double TARGET_MIN_VELOCITY_RIGHT = 1000;
+    public final double TARGET_VELOCITY_LEFT = 1200;
+    public final double TARGET_VELOCITY_RIGHT = 1100;
+    public final double TARGET_MIN_VELOCITY_LEFT = 1150;
+    public final double TARGET_MIN_VELOCITY_RIGHT = 1080;
 
     public enum SIDES{
         RIGHT,
@@ -52,10 +52,10 @@ public class Reggie {
     public double sortPositionLeft = 0.9;
 
     // FIND THIS VALUES
-    public double leftStopperSTOP = 0.85;
+    public double leftStopperSTOP = 0.87;
     public double leftStopperPASS = 0.6;
     public double rightStopperPASS = 0.6;
-    public double rightStopperSTOP = 0.2;
+    public double rightStopperSTOP = 0.25;
 
     // HardwareMap object
     private HardwareMap hwMap = null;
