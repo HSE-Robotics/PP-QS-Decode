@@ -11,10 +11,12 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
         import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Reggie;
+@Disabled
 
 
 /**
@@ -201,7 +203,7 @@ public class ReggieAuto_v1BLUE extends OpMode {
                 Miller.indexerPower(0,Miller.leftIndexerServo);
                 Miller.setShooterPower(shooterPower);
                 Miller.indexerPower(65, Miller.leftIndexerServo);
-                Miller.setIntakePower(65,Miller.intakeMotor);
+                Miller.setIntakePower(65);
                 Miller.setSorterServoPosition(sortPositionLeft);
                 if(pathTimer.getElapsedTimeSeconds() >= 5){
                     setPathState(31);
@@ -239,7 +241,7 @@ public class ReggieAuto_v1BLUE extends OpMode {
                 break;
             case 41:
                 Miller.setShooterPower(shooterPower);
-                Miller.setIntakePower(58, Miller.intakeMotor);
+                Miller.setIntakePower(58);
                 Miller.setSorterServoPosition(sortPositionLeft);
                 Miller.indexerPower(65, Miller.leftIndexerServo);
                 if(pathTimer.getElapsedTimeSeconds() >= 5){
@@ -269,7 +271,7 @@ public class ReggieAuto_v1BLUE extends OpMode {
                 Miller.indexerPower(0, Miller.leftIndexerServo);
                 if (pathTimer.getElapsedTimeSeconds() >= 1.75) {
                     setPathState(52);
-                    Miller.setIntakePower(80, Miller.intakeMotor);
+                    Miller.setIntakePower(80);
                 }
                 break;
             case 52:
@@ -288,7 +290,7 @@ public class ReggieAuto_v1BLUE extends OpMode {
 
                     setPathState(61);
                     Miller.setShooterPower(0);
-                    Miller.setIntakePower(0.65, Miller.intakeMotor);
+                    Miller.setIntakePower(0.65);
                     Miller.indexerPower(-100, Miller.rightIndexerServo);
                 }
                 break;

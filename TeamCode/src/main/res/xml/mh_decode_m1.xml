@@ -14,7 +14,7 @@
             <goBILDA5202SeriesMotor name="LS" port="1"/>
             <goBILDA5202SeriesMotor name="BL" port="2"/>
             <goBILDA5202SeriesMotor name="FL" port="3"/>
-            <ContinuousRotationServo name="LServo" port="0"/>
+            <ContinuousRotationServo name="LServo" port="5"/>
             <Servo name="indServo" port="1"/>
             <Servo name="LStopper" port="2"/>
             <HuskyLens name="huskylens" port="1" />

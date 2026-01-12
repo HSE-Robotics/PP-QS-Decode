@@ -193,11 +193,11 @@ public class ReggieTeleop_v1 extends OpMode {
 
         //Intake
         if (gamepad1.left_trigger > 0.125) {
-            Miller.setIntakePower(-gamepad1.left_trigger, Miller.intakeMotor);
+            Miller.setIntakePower(-gamepad1.left_trigger);
         } else if (gamepad1.right_trigger > 0.125) {
-            Miller.setIntakePower(gamepad1.right_trigger, Miller.intakeMotor);
+            Miller.setIntakePower(gamepad1.right_trigger);
         } else {
-            Miller.setIntakePower(0.0, Miller.intakeMotor);
+            Miller.setIntakePower(0.0);
         }
 
 

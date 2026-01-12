@@ -1,16 +1,20 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.util.Timer;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.EnumMap;
 import java.util.Objects;
@@ -20,6 +24,8 @@ public class Reggie {
 
     // Declare hardware components as public to be accessible in OpModes
     private Timer pathTimer;
+    public static Pose poseFromAuto = new Pose(0,0,0);
+    public static Pose scoringPose = new Pose(0,0,0);
     public DcMotor intakeMotor = null;
     public DcMotorEx leftShooterMotor = null;
     public DcMotorEx rightShooterMotor = null;
@@ -38,10 +44,10 @@ public class Reggie {
         PASS
     }
     StoppersStates stoppersStates = StoppersStates.STOP;
-    public final double TARGET_VELOCITY_LEFT = 1200;
-    public final double TARGET_VELOCITY_RIGHT = 1100;
-    public final double TARGET_MIN_VELOCITY_LEFT = 1150;
-    public final double TARGET_MIN_VELOCITY_RIGHT = 1080;
+    public double TARGET_VELOCITY_LEFT = 1400;
+    public double TARGET_MIN_VELOCITY_LEFT = 1200;
+    public double TARGET_VELOCITY_RIGHT = 1300;
+    public double TARGET_MIN_VELOCITY_RIGHT = 1200;
 
     public enum SIDES{
         RIGHT,
@@ -58,6 +64,8 @@ public class Reggie {
     public double leftStopperPASS = 0.6;
     public double rightStopperPASS = 0.6;
     public double rightStopperSTOP = 0.25;
+    public double P = 38;
+    public double F = 14;
 
     // HardwareMap object
     private HardwareMap hwMap = null;
@@ -65,6 +73,7 @@ public class Reggie {
 
     /* Constructor */
     public Reggie() {
+
     }
 
     /* Initialize hardware */
@@ -73,6 +82,7 @@ public class Reggie {
         hwMap = ahwMap;
 
         // Define and Initialize Motors
+        //poseFromAuto = new Pose();
 
         intakeMotor = hwMap.get(DcMotor.class, "int");
         leftShooterMotor = hwMap.get(DcMotorEx.class, "LS");
@@ -107,6 +117,10 @@ public class Reggie {
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P,0,0,F);
+
+        //leftShooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
+        //rightShooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
 
         //Set all Sensors
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
@@ -124,17 +138,21 @@ public class Reggie {
         this.rightShooterMotor.setPower(power*0.01);
     }
     public void setShooterVelocity(SIDES side) {
+//        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, 0, 0, F);
+//        this.leftShooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+//        this.rightShooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+
         if (side == SIDES.LEFT) {
-            this.leftShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_LEFT);
-            this.rightShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_LEFT);
+            this.leftShooterMotor.setVelocity(this.TARGET_VELOCITY_LEFT);
+            this.rightShooterMotor.setVelocity(this.TARGET_VELOCITY_LEFT);
         } else {
-            this.leftShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_RIGHT);
-            this.rightShooterMotor.setVelocity(this.TARGET_MIN_VELOCITY_RIGHT);
+            this.leftShooterMotor.setVelocity(this.TARGET_VELOCITY_RIGHT);
+            this.rightShooterMotor.setVelocity(this.TARGET_VELOCITY_RIGHT);
         }
     }
 
-    public void setIntakePower(double power, DcMotor Intake) {
-        Intake.setPower(power);
+    public void setIntakePower(double power) {
+        this.intakeMotor.setPower(power);
     }
     public void setSorterServoPosition(double position) {
         sorterServo.setPosition(position);
@@ -196,7 +214,7 @@ public class Reggie {
 
     public void PPG(){
         indexerPower(70, leftIndexerServo);
-        setIntakePower(100,intakeMotor);
+        setIntakePower(100);
         setSorterServoPosition(1);
         if(pathTimer.getElapsedTimeSeconds() >=5){
             setSorterServoPosition(0);
@@ -205,7 +223,7 @@ public class Reggie {
                 indexerPower(0, rightIndexerServo);
                 indexerPower(0, leftIndexerServo);
                 setShooterPower(0);
-                setIntakePower(0,intakeMotor);
+                setIntakePower(0);
             }
         }
     }

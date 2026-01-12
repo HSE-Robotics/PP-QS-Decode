@@ -7,6 +7,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -17,7 +18,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 
-
+@Disabled
 /**
  *
  * @author Gerry DLIII - 18908 Mighty Hawks
@@ -152,7 +153,7 @@ public class ReggieAuto_v1 extends OpMode {
                 //PPG
                 Miller.setShooterPower(PShoot);
                 Miller.indexerPower(65, Miller.leftIndexerServo);
-                Miller.setIntakePower(5,Miller.intakeMotor);
+                Miller.setIntakePower(5);
                 Miller.setSorterServoPosition(sortPositionLeft);
                 if(pathTimer.getElapsedTimeSeconds() >= 2){
                     setPathState(31);
@@ -170,7 +171,7 @@ public class ReggieAuto_v1 extends OpMode {
                 Miller.indexerPower(0, Miller.rightIndexerServo);
                 Miller.indexerPower(0, Miller.leftIndexerServo);
                 Miller.setShooterPower(0);
-                Miller.setIntakePower(50,Miller.intakeMotor);
+                Miller.setIntakePower(50);
                 setPathState(6);
                 break;
             case 4:
@@ -198,11 +199,11 @@ public class ReggieAuto_v1 extends OpMode {
                 break;
              case 41:
 
-                Miller.setIntakePower(70, Miller.intakeMotor);
+                Miller.setIntakePower(70);
                 Miller.setSorterServoPosition(sortPositionLeft);
                 Miller.indexerPower(85, Miller.leftIndexerServo);
                 if(pathTimer.getElapsedTimeSeconds() >= 0.75){
-                    Miller.setIntakePower(0, Miller.intakeMotor);
+                    Miller.setIntakePower(0);
                     //Miller.setSorterServoPosition(sortPositionLeft);
                     Miller.indexerPower(0, Miller.leftIndexerServo);
                     setPathState(411);
@@ -214,7 +215,7 @@ public class ReggieAuto_v1 extends OpMode {
                 }
                 break;
             case 412:
-                Miller.setIntakePower(75, Miller.intakeMotor);
+                Miller.setIntakePower(75);
                 Miller.setSorterServoPosition(sortPositionLeft);
                 Miller.indexerPower(85, Miller.leftIndexerServo);
                 if(pathTimer.getElapsedTimeSeconds() >= 0.5){
@@ -244,7 +245,7 @@ public class ReggieAuto_v1 extends OpMode {
                 Miller.indexerPower(0, Miller.leftIndexerServo);
                 if (pathTimer.getElapsedTimeSeconds() >= 3) {
                     setPathState(52);
-                    Miller.setIntakePower(100, Miller.intakeMotor);
+                    Miller.setIntakePower(100);
                 }
                 break;
             case 52:

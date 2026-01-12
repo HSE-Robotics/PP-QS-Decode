@@ -13,11 +13,12 @@ import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Reggie;
 
-@Disabled
+
 
 /**
  *
@@ -25,10 +26,12 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Reggie;
  * @version 1.0, 02/11/2024
  */
 @Autonomous(name = "Reggie_Auto_BLUE_FAR", group = "LM1 Reggie")
-public class ReggieAutoFAR_v1BLUE extends OpMode {
+public class ReggieAutoFARBLUE_v2 extends OpMode {
     //private static final Logger log = LoggerFactory.getLogger(AyCrush2P_PP.class);
     //Pedro Pathing Variables
     private Follower follower;
+    public DcMotorEx leftShooterMotor = null;
+    public DcMotorEx rightShooterMotor = null;
     private Reggie Miller;
     public static Pose startingPose;
     public int motif;
@@ -41,11 +44,19 @@ public class ReggieAutoFAR_v1BLUE extends OpMode {
     double sortPositionMiddle = 0.45;
     double sortPositionRight = 0.1;
     double sortPositionLeft = 0.65;
+    public double TARGET_VELOCITY_LEFT = 1200;
+    public double TARGET_MIN_VELOCITY_LEFT = 1190;
+    public double TARGET_VELOCITY_RIGHT = 1300;
+    public double TARGET_MIN_VELOCITY_RIGHT = 1290;
     private Path Start;
+    public enum ShooterSide{
+        LEFT,
+        RIGHT
+    }
     public PathChain ReadPos, Score, Park;
-    private final Pose startPose = new Pose(62, 9, Math.toRadians(90)); // Start Pose of our robot.
-    private final Pose readPos = new Pose(62, 36, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
-    private final Pose scorePose = new Pose(58, 18, Math.toRadians(112)); // Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose startPose = new Pose(56, 9, Math.toRadians(90)); // Start Pose of our robot.
+    private final Pose readPos = new Pose(56, 46, Math.toRadians(65)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    private final Pose scorePose = new Pose(58, 21, Math.toRadians(112)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose park = new Pose(34, 14, Math.toRadians(180)); // Highest (First Set) of Artifacts from the Spike Mark.
 
 
@@ -74,6 +85,11 @@ public class ReggieAutoFAR_v1BLUE extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
+
+        leftShooterMotor = hardwareMap.get(DcMotorEx.class, "LS");
+        rightShooterMotor = hardwareMap.get(DcMotorEx.class, "RS");
+
+
         //motif = order(Miller.huskyLens);
 
         // playTime.reset();
@@ -119,11 +135,13 @@ public class ReggieAutoFAR_v1BLUE extends OpMode {
                 //follower.setMaxPower(.8);
 
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if(!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 10) {
+                ///if(!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 10) {
+                if(!follower.isBusy()) {
                     /* Score Preload */
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(Score,true);
                     Miller.setShooterPower(70);
+                    Miller.setStoppers(false,false);
                     setPathState(2);
                 }
                 break;
@@ -144,16 +162,16 @@ public class ReggieAutoFAR_v1BLUE extends OpMode {
             case 3:
                 //PPG
                 Miller.indexerPower(0,Miller.leftIndexerServo);
-                Miller.setShooterPower(shooterPower);
-                Miller.indexerPower(65, Miller.leftIndexerServo);
+                setShooterSide(ShooterSide.LEFT);
+                Miller.indexerPower(25, Miller.leftIndexerServo);
                 Miller.setIntakePower(65);
                 Miller.setSorterServoPosition(sortPositionLeft);
-                if(pathTimer.getElapsedTimeSeconds() >= 5){
+                setShooterSide(ShooterSide.RIGHT);
+                if(targetVelocityAcquired(ShooterSide.RIGHT )&& (pathTimer.getElapsedTimeSeconds() >= 4)){
                     setPathState(31);
                 }
                 break;
             case 31:
-                Miller.setShooterPower(GshooterPower);
                 Miller.setSorterServoPosition(sortPositionRight);
                 Miller.indexerPower(80, Miller.rightIndexerServo);
                 if (pathTimer.getElapsedTimeSeconds() >= 2 && artifact == 0){
@@ -168,17 +186,17 @@ public class ReggieAutoFAR_v1BLUE extends OpMode {
             case 4:
                 //GPP
                 Miller.indexerPower(0,Miller.leftIndexerServo);
-                Miller.setShooterPower(GshooterPower);
+                setShooterSide(ShooterSide.RIGHT);
                 Miller.indexerPower(80, Miller.rightIndexerServo);
                 Miller.indexerPower(0, Miller.leftIndexerServo);
                 Miller.setSorterServoPosition(sortPositionRight);
-                if(pathTimer.getElapsedTimeSeconds() >= 2){
+                setShooterSide(ShooterSide.LEFT);
+                if(targetVelocityAcquired(ShooterSide.LEFT)){
                     setPathState(41);
                     Miller.setShooterPower(65);
                 }
                 break;
             case 41:
-                Miller.setShooterPower(shooterPower);
                 Miller.setIntakePower(58);
                 Miller.setSorterServoPosition(sortPositionLeft);
                 Miller.indexerPower(30, Miller.leftIndexerServo);
@@ -194,26 +212,26 @@ public class ReggieAutoFAR_v1BLUE extends OpMode {
             case 5:
                 //PGP
                 Miller.indexerPower(0,Miller.leftIndexerServo);
-                Miller.setShooterPower(shooterPower);
+                setShooterSide(ShooterSide.LEFT);
                 Miller.indexerPower(65, Miller.leftIndexerServo);
                 //Miller.setIntakePower(100, Miller.intakeMotor);
                 Miller.setSorterServoPosition(sortPositionLeft);
-                if (pathTimer.getElapsedTimeSeconds() >= 2) {
+                setShooterSide(ShooterSide.RIGHT);
+                if (targetVelocityAcquired(ShooterSide.RIGHT)) {
                     setPathState(51);
                 }
                 break;
             case 51:
-                Miller.setShooterPower(GshooterPower);
                 Miller.setSorterServoPosition(sortPositionRight);
                 Miller.indexerPower(80, Miller.rightIndexerServo);
                 Miller.indexerPower(0, Miller.leftIndexerServo);
-                if (pathTimer.getElapsedTimeSeconds() >= 2) {
+                setShooterSide(ShooterSide.LEFT);
+                if (targetVelocityAcquired(ShooterSide.LEFT)) {
                     setPathState(52);
                     Miller.setIntakePower(80);
                 }
                 break;
             case 52:
-                Miller.setShooterPower(shooterPower);
                 Miller.setSorterServoPosition(sortPositionLeft);
                 Miller.indexerPower(0, Miller.rightIndexerServo);
                 Miller.indexerPower(80, Miller.leftIndexerServo);
@@ -282,5 +300,20 @@ public class ReggieAutoFAR_v1BLUE extends OpMode {
         }
 
         return orden;
+    }
+    public void setShooterSide(ShooterSide side) {
+        if (side == ShooterSide.LEFT) {
+            leftShooterMotor.setVelocity(TARGET_VELOCITY_LEFT);
+            rightShooterMotor.setVelocity(TARGET_VELOCITY_LEFT);
+        } else {
+            leftShooterMotor.setVelocity(TARGET_VELOCITY_RIGHT);
+            rightShooterMotor.setVelocity(TARGET_VELOCITY_RIGHT);
+        }
+    }
+    public boolean targetVelocityAcquired(ShooterSide side){
+        if (side == ShooterSide.LEFT) {
+            return leftShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_LEFT && rightShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_LEFT;
+        }
+        return leftShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_RIGHT && rightShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_RIGHT;
     }
     }

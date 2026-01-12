@@ -4,7 +4,10 @@ package org.firstinspires.ftc.teamcode.pedroPathing.TeleOp;
 //import com.bylazar.telemetry.TelemetryManager;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -29,7 +32,8 @@ public class ReggieTeleop_v2 extends OpMode {
     private ColorSensor colorSensorRight;
     private Follower follower;
     private Reggie Miller;
-    public static Pose startingPose;
+    public static Pose startingPose = Reggie.poseFromAuto;
+    public static Pose scoringPose = Reggie.scoringPose;
 
     public enum ScoringState {
         IDLE,
@@ -41,6 +45,9 @@ public class ReggieTeleop_v2 extends OpMode {
     }
 
     ScoringState artifactScoringState = ScoringState.IDLE;
+    int longDistanceVelocity = 1500;
+    int midDistanceVelocity = 1300;
+    int closeDistanceVelocity = 1150;
     int longDistancePower = 90;
     int midDistancePower = 68;
     int closeDistancePower = 60;
@@ -48,9 +55,9 @@ public class ReggieTeleop_v2 extends OpMode {
     int shootingState = 0;
     public boolean inEndgame;
     public ElapsedTime shootingTime, playTime;
-    /*double sortPositionMiddle = 0.45;
+    double sortPositionMiddle =0.5 ;
     double sortPositionRight = 0.05;
-    double sortPositionLeft = 0.9;*/
+    double sortPositionLeft = 0.9;
     int Side = 0;
     int rRed;
     int rGreen;
@@ -183,23 +190,31 @@ public class ReggieTeleop_v2 extends OpMode {
 
         //Intake
         if (gamepad1.left_trigger > 0.125) {
-            Miller.setIntakePower(-gamepad1.left_trigger, Miller.intakeMotor);
+            Miller.setIntakePower(-gamepad1.left_trigger);
+            
+
         } else if (gamepad1.right_trigger > 0.125) {
-            Miller.setIntakePower(gamepad1.right_trigger, Miller.intakeMotor);
+            Miller.setIntakePower(gamepad1.right_trigger);
+            Miller.setStoppers(true,true);
+            Miller.setSorterServoPosition(.7);
         } else {
-            Miller.setIntakePower(0.0, Miller.intakeMotor);
+            Miller.setIntakePower(0.0);
         }
 
 
         //Indexers Code
         if (gamepad1.right_bumper) {
-            Miller.indexerPower(100, Miller.rightIndexerServo);
+            Miller.indexerPower(80, Miller.rightIndexerServo);
             Miller.indexerPower(0, Miller.leftIndexerServo);
             Miller.setSorterServoPosition(Miller.sortPositionRight);
+            Miller.setStoppers(false,true);
+            Miller.setIntakePower(0.4);
         } else if (gamepad1.left_bumper) {
-            Miller.indexerPower(100, Miller.leftIndexerServo);
+            Miller.indexerPower(80, Miller.leftIndexerServo);
             Miller.indexerPower(0, Miller.rightIndexerServo);
             Miller.setSorterServoPosition(Miller.sortPositionLeft);
+            Miller.setStoppers(true,false);
+            Miller.setIntakePower(0.4);
         } else {
             Miller.indexerPower(0, Miller.leftIndexerServo);
             Miller.indexerPower(0, Miller.rightIndexerServo);
@@ -207,11 +222,23 @@ public class ReggieTeleop_v2 extends OpMode {
 
         //Flywheels
         if (gamepad1.square) {
-            Miller.setShooterPower(longDistancePower);
+            Miller.TARGET_MIN_VELOCITY_LEFT = longDistanceVelocity - 100;
+            Miller.TARGET_VELOCITY_LEFT = longDistanceVelocity;
+            Miller.setShooterVelocity(Reggie.SIDES.LEFT);
+//            Miller.setShooterPower(longDistancePower);
         } else if (gamepad1.triangle) {
-            Miller.setShooterPower(midDistancePower);
+
+            Miller.TARGET_MIN_VELOCITY_LEFT = midDistanceVelocity - 100;
+            Miller.TARGET_VELOCITY_LEFT = midDistanceVelocity;
+            Miller.setShooterVelocity(Reggie.SIDES.LEFT);
+//            Miller.setShooterPower(midDistancePower);
         } else if (gamepad1.circle) {
-            Miller.setShooterPower(closeDistancePower);
+//            Miller.setShooterPower(closeDistancePower);
+
+            Miller.TARGET_MIN_VELOCITY_LEFT = closeDistanceVelocity - 100;
+            Miller.TARGET_VELOCITY_LEFT = closeDistanceVelocity;
+            Miller.setShooterVelocity(Reggie.SIDES.LEFT);
+//            Miller.setShooterVelocity(closeDistanceVelocity);
         } else if (gamepad1.cross) {
             Miller.setShooterPower(0);
         }
@@ -222,7 +249,7 @@ public class ReggieTeleop_v2 extends OpMode {
         } else if (gamepad1.dpad_right) {
             Miller.setSorterServoPosition(Miller.sortPositionRight);
         } else if (gamepad1.dpad_down) {
-            Miller.setSorterServoPosition(Miller.sortPositionMiddle);
+            Miller.setSorterServoPosition(sortPositionMiddle);
         }
 
         //General code for both options (1 or 2 Players)
@@ -232,13 +259,27 @@ public class ReggieTeleop_v2 extends OpMode {
             endgameLED();
             inEndgame = true;
         }
+
+        if(gamepad1.psWasPressed()){
+            Pose currentPose = follower.getPose();
+             PathChain ScoringPath;
+            ScoringPath = follower.pathBuilder().
+                            addPath(new BezierLine(currentPose, scoringPose))
+                    .setLinearHeadingInterpolation(currentPose.getHeading(),scoringPose.getHeading())
+                                            .build();
+            follower.followPath(ScoringPath, 0.85,true);
+        }
+
+        /*
         if(gamepad1.dpad_down){
             Miller.leftStopper.setPosition(Miller.leftStopper.getPosition()-0.01);
-//            Miller.rightStopper.setPosition(Miller.rightStopper.getPosition()-0.01);
+            Miller.rightStopper.setPosition(Miller.rightStopper.getPosition()-0.01);
         }else if(gamepad1.dpad_up){
             Miller.leftStopper.setPosition(Miller.leftStopper.getPosition()+0.01);
-//            Miller.rightStopper.setPosition(Miller.rightStopper.getPosition()+0.01);
+            Miller.rightStopper.setPosition(Miller.rightStopper.getPosition()+0.01);
         }
+        */
+
         /*else if(gamepad1.dpad_up){
             Miller.setStoppers(false, true);
         }else if(gamepad1.dpad_left){
