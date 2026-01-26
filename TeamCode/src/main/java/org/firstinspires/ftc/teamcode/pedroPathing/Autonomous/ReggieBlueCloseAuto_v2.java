@@ -81,7 +81,7 @@ public class ReggieBlueCloseAuto_v2 extends OpMode {
                       pickSecondBallMiddleRowPath,pickSecondBallMiddleRowPathGPP, pickThirdBallMiddleRowPathGPP, scoreFromMiddleRowPathGPP,
                       pickThirdBallMiddleRowPath, leavePath, pickThirdBallMiddleRowPathPPG, scoreFromMiddleRowPathPPG,
                       pickSecondBallMiddleRowPathPPG;
-    private final Pose startPose = new Pose(57, 134, Math.toRadians(90)); // Start Pose of our robot.
+    private final Pose startPose = new Pose(16, 113, Math.toRadians(90)); // Start Pose of our robot.
     private final Pose readPose = new Pose(51, 95, Math.toRadians(80)); // Reading Obelisk Pose of our robot. It is facing the obelisk at 127 degree angle.
     private final Pose scorePose = new Pose(48, 90, Math.toRadians(shootingAngleFirst)); // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
     //    //private final Pose scorePoseSecond = new Pose(92, 93, Math.toRadians(40)); //  Working Pose
@@ -310,15 +310,16 @@ public class ReggieBlueCloseAuto_v2 extends OpMode {
                 Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
 
                 //Miller.shootClose();
-                if(pathTimer.getElapsedTimeSeconds() >= 4){
-
-                    break;
-                }
                 break;
             case 11:
                 motif = order(Miller.huskyLens);
                 if(!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 0.75 && (motif==1 || motif==2 || motif==3)){
                     setPathState(1);
+                }
+                if(pathTimer.getElapsedTimeSeconds() >= 4){
+                    Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
+                    follower.followPath(ScorePath,0.85,true);
+                    setPathState(100);
                 }
                 break;
             case 1:

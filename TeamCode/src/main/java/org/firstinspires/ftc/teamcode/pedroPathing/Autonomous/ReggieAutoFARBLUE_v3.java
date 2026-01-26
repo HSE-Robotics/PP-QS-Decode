@@ -11,7 +11,6 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -19,15 +18,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Reggie;
 
 
-
 /**
  *
  * @author Gerry DLIII - 18908 Mighty Hawks
  * @version 1.0, 02/11/2024
  */
-@Disabled
 @Autonomous(name = "Reggie_Auto_BLUE_FAR", group = "LM1 Reggie")
-public class ReggieAutoFARBLUE_v2 extends OpMode {
+public class ReggieAutoFARBLUE_v3 extends OpMode {
     //private static final Logger log = LoggerFactory.getLogger(AyCrush2P_PP.class);
     //Pedro Pathing Variables
     private Follower follower;
@@ -54,7 +51,7 @@ public class ReggieAutoFARBLUE_v2 extends OpMode {
         LEFT,
         RIGHT
     }
-    public PathChain ReadPos, Score, Park;
+    public PathChain ReadPos, Score, Park,startToLeave;
     private final Pose startPose = new Pose(56, 9, Math.toRadians(90)); // Start Pose of our robot.
     private final Pose readPos = new Pose(56, 46, Math.toRadians(65)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose scorePose = new Pose(58, 21, Math.toRadians(112)); // Highest (First Set) of Artifacts from the Spike Mark.
@@ -111,6 +108,10 @@ public class ReggieAutoFARBLUE_v2 extends OpMode {
                 .addPath(new BezierLine(scorePose,park))
                 .setLinearHeadingInterpolation(readPos.getHeading(), park.getHeading())
                 .build();
+        startToLeave = follower.pathBuilder()
+                .addPath(new BezierLine(startPose,park))
+                .setLinearHeadingInterpolation(startPose.getHeading(), park.getHeading())
+                .build();
 
         /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
     }
@@ -118,9 +119,9 @@ public class ReggieAutoFARBLUE_v2 extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.setMaxPower(.7);
-                follower.followPath(ReadPos,true);
-                setPathState(11);
+                follower.setMaxPower(.9);
+                //follower.followPath(ReadPos,true);
+                setPathState(900);
 
                 //Miller.shootClose();
 
@@ -238,6 +239,17 @@ public class ReggieAutoFARBLUE_v2 extends OpMode {
                 Miller.indexerPower(80, Miller.leftIndexerServo);
                 if (pathTimer.getElapsedTimeSeconds() >= 2) {
                     setPathState(32);
+                }
+                break;
+            case 900:
+                if(!follower.isBusy()){
+                    follower.followPath(startToLeave);
+                    setPathState(901);
+                }
+                break;
+            case 901:
+                if(!follower.isBusy()){
+                    requestOpModeStop();
                 }
                 break;
         }

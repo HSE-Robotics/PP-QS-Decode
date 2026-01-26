@@ -27,9 +27,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Reggie;
 public class ReggieTeleop_v2 extends OpMode {
     //private static final Logger log = LoggerFactory.getLogger(AyCrush2P_PP.class);
     //Pedro Pathing Variables
-    private ColorSensor colorSensorLeft;
+//    private ColorSensor colorSensorLeft;
     public HuskyLens huskyLens;
-    private ColorSensor colorSensorRight;
+//    private ColorSensor colorSensorRight;
     private Follower follower;
     private Reggie Miller;
     public static Pose startingPose = Reggie.poseFromAuto;
@@ -45,7 +45,7 @@ public class ReggieTeleop_v2 extends OpMode {
     }
 
     ScoringState artifactScoringState = ScoringState.IDLE;
-    int longDistanceVelocity = 1500;
+    int longDistanceVelocity = 1600;
     int midDistanceVelocity = 1300;
     int closeDistanceVelocity = 1150;
     int longDistancePower = 90;
@@ -79,13 +79,13 @@ public class ReggieTeleop_v2 extends OpMode {
         follower.update();
         Miller = new Reggie();
         Miller.init(hardwareMap);
-
+        Miller.usingPIDF = true;
         shootingTime = new ElapsedTime();
         playTime = new ElapsedTime();
         inEndgame = false;
 
-        colorSensorLeft = hardwareMap.get(ColorSensor.class, "colorSensorLeft");
-        colorSensorRight = hardwareMap.get(ColorSensor.class, "colorSensorRight");
+//        colorSensorLeft = hardwareMap.get(ColorSensor.class, "colorSensorLeft");
+//        colorSensorRight = hardwareMap.get(ColorSensor.class, "colorSensorRight");
         huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
 
@@ -113,12 +113,12 @@ public class ReggieTeleop_v2 extends OpMode {
         follower.update();
         follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
 
-        lBlue = colorSensorLeft.blue();
-        lGreen = colorSensorLeft.green();
-        lRed = colorSensorLeft.red();
-        rBlue = colorSensorRight.blue();
-        rGreen = colorSensorRight.green();
-        rRed = colorSensorRight.red();
+//        lBlue = colorSensorLeft.blue();
+//        lGreen = colorSensorLeft.green();
+//        lRed = colorSensorLeft.red();
+//        rBlue = colorSensorRight.blue();
+//        rGreen = colorSensorRight.green();
+//        rRed = colorSensorRight.red();
 
 
 
@@ -191,12 +191,12 @@ public class ReggieTeleop_v2 extends OpMode {
         //Intake
         if (gamepad1.left_trigger > 0.125) {
             Miller.setIntakePower(-gamepad1.left_trigger);
-            
+
 
         } else if (gamepad1.right_trigger > 0.125) {
             Miller.setIntakePower(gamepad1.right_trigger);
             Miller.setStoppers(true,true);
-            Miller.setSorterServoPosition(.7);
+            //Miller.setSorterServoPosition(.7);
         } else {
             Miller.setIntakePower(0.0);
         }
@@ -218,6 +218,7 @@ public class ReggieTeleop_v2 extends OpMode {
         } else {
             Miller.indexerPower(0, Miller.leftIndexerServo);
             Miller.indexerPower(0, Miller.rightIndexerServo);
+            Miller.setSorterServoPosition(sortPositionMiddle);
         }
 
         //Flywheels
@@ -260,7 +261,7 @@ public class ReggieTeleop_v2 extends OpMode {
             inEndgame = true;
         }
 
-        if(gamepad1.psWasPressed()){
+       /* if(gamepad1.psWasPressed()){
             Pose currentPose = follower.getPose();
              PathChain ScoringPath;
             ScoringPath = follower.pathBuilder().
@@ -268,7 +269,7 @@ public class ReggieTeleop_v2 extends OpMode {
                     .setLinearHeadingInterpolation(currentPose.getHeading(),scoringPose.getHeading())
                                             .build();
             follower.followPath(ScoringPath, 0.85,true);
-        }
+        }*/
 
         /*
         if(gamepad1.dpad_down){
@@ -288,6 +289,10 @@ public class ReggieTeleop_v2 extends OpMode {
             Miller.setStoppers(true, true);
         }*/
 
+        if(gamepad1.psWasPressed()){
+            Miller.usingPIDF = !Miller.usingPIDF;
+        }
+
         telemetry.addData("Side", Side);
 
         telemetry.addData("Play Time: ", playTime.seconds());
@@ -295,6 +300,7 @@ public class ReggieTeleop_v2 extends OpMode {
             telemetry.addData("Its Miller Time - ", "Shooting from Far Away!");
         }
         telemetry.addData("Current State:", artifactScoringState.toString());
+        telemetry.addData("Using PIDF:", Miller.usingPIDF);
 
         telemetry.addData("Left Blue:",lBlue);
         telemetry.addData("Left Green:",lGreen);

@@ -39,7 +39,7 @@ public class ReggieRedCloseAuto_v2 extends OpMode {
     private int PShoot = 65;
     double sortPositionMiddle = 0.45;
     double sortPositionRight = 0.1;
-    double sortPositionLeft = 0.9;
+    double sortPositionLeft = 0.75;
     double sortPositionMidLeft = 0.75;
 
     private enum Rows{
@@ -76,9 +76,9 @@ public class ReggieRedCloseAuto_v2 extends OpMode {
                       pickThirdBallTopRowPath, grabPickup2,forward, scoreFromTopRowPath, scoreFromMiddleRowPath,
                         aimingFirstBallMiddleRowPath, pickFirstBallMiddleRowPath, pickSecondBallMiddleRowPath,
                         pickThirdBallMiddleRowPath, leavePath, pickThirdBallMiddleRowPathPPG, scoreFromMiddleRowPathPPG, pickSecondBallMiddleRowPathPPG;
-    private final Pose startPose = new Pose(87, 135, Math.toRadians(90)); // Start Pose of our robot.
+    private final Pose startPose = new Pose(128, 113, Math.toRadians(90)); // Start Pose of our robot.
     private final Pose readPose = new Pose(93, 95, Math.toRadians(90)); // Reading Obelisk Pose of our robot. It is facing the obelisk at 127 degree angle.
-    private final Pose scorePose = new Pose(90, 95, Math.toRadians(30)); // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
+    private final Pose scorePose = new Pose(90, 95, Math.toRadians(32)); // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
     //    //private final Pose scorePoseSecond = new Pose(92, 93, Math.toRadians(40)); //  Working Pose
     private final Pose scorePoseSecond = new Pose(90, 90, Math.toRadians(45));
     private final Pose scorePoseSecondControl = new Pose(92, 80, Math.toRadians(23)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
@@ -86,7 +86,7 @@ public class ReggieRedCloseAuto_v2 extends OpMode {
     private final Pose scorePoseThird = new Pose(95, 92, Math.toRadians(45)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose aimingFirstBallTopRowPose = new Pose(96, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickFirstBallTopRowPose = new Pose(98, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickSecondBallTopRowPose = new Pose(109, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickSecondBallTopRowPose = new Pose(111, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickThirdBallTopRowPose = new Pose(122, yTopRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickThirdBallTopRowControlPose = new Pose(96, yTopRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose aimingFirstBallMiddleRowPose = new Pose(100, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
@@ -141,85 +141,85 @@ public class ReggieRedCloseAuto_v2 extends OpMode {
     }
 
     public void buildPaths() {
-        /* Drive to read the obelisk */
+        ///* Drive to read the obelisk */
         ReadPath = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, readPose))
                 .setLinearHeadingInterpolation(startPose.getHeading(),readPose.getHeading())
                 .build();
 
-        /* Turn to score position */
+        ///* Turn to score position */
         ScorePath = follower.pathBuilder()
                 .addPath(new BezierLine(readPose, scorePose))
                 .setLinearHeadingInterpolation(readPose.getHeading(),scorePose.getHeading())
                 .build();
 
-        /* Aim to get the first ball from the top row */
+        ///* Aim to get the first ball from the top row */
         aimingFirstBallTopRowPath = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose,new Pose(93, 83.000), aimingFirstBallTopRowPose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(),aimingFirstBallTopRowPose.getHeading())
                 .build();
 
-        /* Drive to pick the first ball then stop to sort */
+        ///* Drive to pick the first ball then stop to sort */
         pickFirstBallTopRowPath = follower.pathBuilder()
                 .addPath(new BezierLine(aimingFirstBallTopRowPose, pickFirstBallTopRowPose))
                 .setLinearHeadingInterpolation(aimingFirstBallTopRowPose.getHeading(),pickFirstBallTopRowPose.getHeading())
                 .build();
 
-        /* Drive to pick the Second ball from top row */
+        ///* Drive to pick the Second ball from top row */
         pickSecondBallTopRowPath = follower.pathBuilder()
                 .addPath(new BezierLine(pickFirstBallTopRowPose, pickSecondBallTopRowPose))
                 .setLinearHeadingInterpolation(pickFirstBallTopRowPose.getHeading(),pickSecondBallTopRowPose.getHeading())
                 .build();
 
-        /* Drive to pick the Third ball from top row */
+        ///* Drive to pick the Third ball from top row */
         pickThirdBallTopRowPath = follower.pathBuilder()
                 .addPath(new BezierCurve(pickSecondBallTopRowPose, pickThirdBallTopRowControlPose, pickThirdBallTopRowPose))
                 .setLinearHeadingInterpolation(pickSecondBallTopRowPose.getHeading(),pickThirdBallTopRowPose.getHeading())
                 .build();
 
-        /* Drive to Score from the Third ball from top row */
+        ///* Drive to Score from the Third ball from top row */
         scoreFromTopRowPath = follower.pathBuilder()
                 .addPath(new BezierCurve(pickThirdBallTopRowPose, scorePoseSecondControl ,scorePoseSecond))
                 .setLinearHeadingInterpolation(pickThirdBallTopRowPose.getHeading(),scorePoseSecond.getHeading())
                 .build();
 
-        /* Drive to Score from the Third ball from Middle row */
+        ///* Drive to Score from the Third ball from Middle row */
         scoreFromMiddleRowPath = follower.pathBuilder()
                 .addPath(new BezierCurve(pickThirdBallMiddleRowPose, scorePoseThirdControl, scorePoseThird))
                 .setLinearHeadingInterpolation(pickThirdBallMiddleRowPose.getHeading(),scorePoseThird.getHeading())
                 .build();
 
-        /* Drive to Score from the Third ball from Middle row PPG */
+        ///* Drive to Score from the Third ball from Middle row PPG */
         scoreFromMiddleRowPathPPG = follower.pathBuilder()
                 .addPath(new BezierCurve(pickThirdBallMiddleRowPosePPG, scorePoseThirdControl, scorePoseThird))
                 .setLinearHeadingInterpolation(pickThirdBallMiddleRowPosePPG.getHeading(),scorePoseThird.getHeading())
                 .build();
 
-        /* Aim to get the first ball from the top row */
+        ///* Aim to get the first ball from the top row */
         aimingFirstBallMiddleRowPath = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePoseSecond,new Pose(90.000, 70.0), aimingFirstBallMiddleRowPose))
                 .setLinearHeadingInterpolation(scorePoseSecond.getHeading(),aimingFirstBallMiddleRowPose.getHeading())
                 .build();
 
-        /* Drive to pick the first ball then stop to sort */
+        ///* Drive to pick the first ball then stop to sort */
         pickFirstBallMiddleRowPath = follower.pathBuilder()
                 .addPath(new BezierLine(aimingFirstBallMiddleRowPose, pickFirstBallMiddleRowPose))
                 .setLinearHeadingInterpolation(aimingFirstBallMiddleRowPose.getHeading(),pickFirstBallMiddleRowPose.getHeading())
                 .build();
 
-        /* Drive to pick the Second ball from top row */
+        ///* Drive to pick the Second ball from top row */
         pickSecondBallMiddleRowPath = follower.pathBuilder()
                 .addPath(new BezierCurve(pickFirstBallMiddleRowPose,pickSecondBallMiddleRowControlPose, pickSecondBallMiddleRowPose))
                 .setLinearHeadingInterpolation(pickFirstBallMiddleRowPose.getHeading(),pickSecondBallMiddleRowPose.getHeading())
                 .build();
 
-        /* Drive to pick the Second ball from Middle row PPG */
+        ///* Drive to pick the Second ball from Middle row PPG */
          pickSecondBallMiddleRowPathPPG = follower.pathBuilder()
                 .addPath(new BezierCurve(pickFirstBallMiddleRowPose, pickSecondBallMiddleRowControlPosePPG, pickSecondBallMiddleRowPosePPG))
                 .setLinearHeadingInterpolation(pickFirstBallMiddleRowPose.getHeading(), pickSecondBallMiddleRowPosePPG.getHeading())
                 .build();
 
-        /* Drive to pick the Third ball from top row */
+        ///* Drive to pick the Third ball from top row */
         pickThirdBallMiddleRowPath = follower.pathBuilder()
                 .addPath(new BezierLine(pickSecondBallMiddleRowPose, pickThirdBallMiddleRowPose))
                 .setLinearHeadingInterpolation(pickSecondBallMiddleRowPose.getHeading(),pickThirdBallMiddleRowPose.getHeading())
@@ -256,15 +256,17 @@ public class ReggieRedCloseAuto_v2 extends OpMode {
                 Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
 
                 //Miller.shootClose();
-                if(pathTimer.getElapsedTimeSeconds() >= 4){
 
-                    break;
-                }
                 break;
             case 11:
                 motif = order(Miller.huskyLens);
                 if(!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 0.75 && (motif==1 || motif==2 || motif==3)){
                     setPathState(1);
+                }
+                if(pathTimer.getElapsedTimeSeconds() >= 4){
+                    Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
+                    follower.followPath(ScorePath,0.85,true);
+                    setPathState(100);
                 }
                 break;
             case 1:
@@ -283,17 +285,24 @@ public class ReggieRedCloseAuto_v2 extends OpMode {
             case 2:
                 if(!follower.isBusy() || pathTimer.getElapsedTimeSeconds() >=1.25 ){
                     if ( motif == 1) {
-                        Miller.setShooterVelocity(Reggie.SIDES.LEFT);
-                        Miller.TARGET_MIN_VELOCITY_RIGHT = 1000;
+                        Miller.TARGET_MIN_VELOCITY_RIGHT = 1075;
                         Miller.TARGET_VELOCITY_RIGHT = 1150;
                         Miller.TARGET_VELOCITY_LEFT = 1200;
                         Miller.TARGET_MIN_VELOCITY_LEFT = 1100;
+                        Miller.setShooterVelocity(Reggie.SIDES.LEFT);
                         setPathState(100);
                     }else if ( motif == 2) {
+                        Miller.TARGET_MIN_VELOCITY_RIGHT = 1125;
+                        Miller.TARGET_VELOCITY_RIGHT = 1175;
+                        Miller.TARGET_VELOCITY_LEFT = 1200;
+                        Miller.TARGET_MIN_VELOCITY_LEFT = 1100;
+                        Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
                         setPathState(200);
                     }else if ( motif == 3) {
                         Miller.TARGET_MIN_VELOCITY_RIGHT = 1125;
                         Miller.TARGET_VELOCITY_RIGHT = 1175;
+                        Miller.TARGET_VELOCITY_LEFT = 1200;
+                        Miller.TARGET_MIN_VELOCITY_LEFT = 1100;
                         Miller.setShooterVelocity(Reggie.SIDES.LEFT);
                         setPathState(300);
                     }else{
@@ -309,7 +318,7 @@ public class ReggieRedCloseAuto_v2 extends OpMode {
                 if(Miller.targetVelocityAcquired(Reggie.SIDES.RIGHT)){
                     Miller.setStoppers(true,false);
                     Miller.indexerPower(0, Miller.rightIndexerServo);
-                    Miller.indexerPower(85, Miller.leftIndexerServo);
+                    Miller.indexerPower(65, Miller.leftIndexerServo);
 
                     setPathState(101);
                 }

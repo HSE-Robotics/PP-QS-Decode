@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+import androidx.annotation.Nullable;
+
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -36,8 +38,9 @@ public class Reggie {
     public CRServo rightIndexerServo = null;
     public HuskyLens huskyLens;
     public ElapsedTime idlerTime;
-    public ColorSensor rightColorSensor = null;
-    public ColorSensor leftColorSensor = null;
+//    public ColorSensor rightColorSensor = null;
+//    public ColorSensor leftColorSensor = null;
+    public boolean usingPIDF;
 
     public enum StoppersStates{
         STOP,
@@ -97,8 +100,8 @@ public class Reggie {
 
         //Define and Initialize Sensors
         huskyLens = hwMap.get(HuskyLens.class, "huskylens");
-        rightColorSensor = hwMap.get(ColorSensor.class, "colorSensorRight");
-        leftColorSensor = hwMap.get(ColorSensor.class, "colorSensorLeft");
+//        rightColorSensor = hwMap.get(ColorSensor.class, "colorSensorRight");
+//        leftColorSensor = hwMap.get(ColorSensor.class, "colorSensorLeft");
 
 
         idlerTime = new ElapsedTime();
@@ -125,7 +128,7 @@ public class Reggie {
         //Set all Sensors
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
 
-
+        usingPIDF = false;
 
         // Set servo initial position
         this.setSorterServoPosition(this.sortPositionMiddle); // Example initial position
@@ -138,9 +141,11 @@ public class Reggie {
         this.rightShooterMotor.setPower(power*0.01);
     }
     public void setShooterVelocity(SIDES side) {
-//        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, 0, 0, F);
-//        this.leftShooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-//        this.rightShooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        if(this.usingPIDF) {
+            PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, 0, 0, F);
+            this.leftShooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+            this.rightShooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        }
 
         if (side == SIDES.LEFT) {
             this.leftShooterMotor.setVelocity(this.TARGET_VELOCITY_LEFT);
