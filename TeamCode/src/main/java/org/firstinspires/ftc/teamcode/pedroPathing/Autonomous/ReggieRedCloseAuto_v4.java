@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Reggie;
-import org.firstinspires.ftc.teamcode.pedroPathing.TeleOp.DataStorage;
 
 
 /**
@@ -23,12 +22,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.TeleOp.DataStorage;
  * @version 1.3, 12/11/2025
  */
 @Configurable
-@Autonomous(name = "RED_Close_Regionals", group = "Regionals Reggie")
-public class ReggieRedCloseAuto_v3 extends OpMode {
+@Autonomous(name = "RED_Close_Regionals_Optimized", group = "Regionals Reggie")
+public class ReggieRedCloseAuto_v4 extends OpMode {
     //private static final Logger log = LoggerFactory.getLogger(AyCrush2P_PP.class);
     //Pedro Pathing Variables
     private Follower follower;
     private Reggie Miller;
+    public static Pose startingPose;
     public int motif;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
@@ -40,7 +40,7 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
     double sortPositionMidLeft = 0.75;
     double sortPositionMidRight = 0.25;
 
-    enum Rows{
+    private enum Rows{
         TOP_ROW,
         MIDDLE_ROW,
         BOTTOM_ROW
@@ -53,11 +53,11 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
      *
      */
 
-    public static double yTopRowPurple = 82;
-    public static double yTopRowGreen = 86;
+    public static double yTopRowPurple = 78;
+    public static double yTopRowGreen = 87;
 
-    public static double yMidRowPurple = 60;
-    public static double yMidRowGreen = 63;
+    public static double yMidRowPurple = 55;
+    public static double yMidRowGreen = 60;
     public static double yBotRowPurple = 26;
     public static double yBotRowGreen = 34;
 
@@ -73,35 +73,35 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
     private PathChain ReadPath, ScorePath, aimingFirstBallTopRowPath, pickFirstBallTopRowPath, pickSecondBallTopRowPath,
                       pickThirdBallTopRowPath, grabPickup2,forward, scoreFromTopRowPath, scoreFromMiddleRowPath,
                         aimingFirstBallMiddleRowPath, pickFirstBallMiddleRowPath, pickSecondBallMiddleRowPath,
-                        pickThirdBallMiddleRowPath, pickThirdBallMiddleRowPathPPG, scoreFromMiddleRowPathPPG, pickSecondBallMiddleRowPathGPP;
-    public static Pose startingPose = new Pose(111.281, 134.189, Math.toRadians(90)); // Start Pose of our robot.
+                        pickThirdBallMiddleRowPath, leavePath, pickThirdBallMiddleRowPathPPG, scoreFromMiddleRowPathPPG, pickSecondBallMiddleRowPathPPG;
+    private final Pose startPose = new Pose(128, 113, Math.toRadians(90)); // Start Pose of our robot.
     private final Pose readPose = new Pose(93, 95, Math.toRadians(90)); // Reading Obelisk Pose of our robot. It is facing the obelisk at 127 degree angle.
-    private final Pose scorePose = new Pose(80, 114, Math.toRadians(27)); // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
+    private final Pose scorePose = new Pose(88, 92, Math.toRadians(34)); // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
     //    //private final Pose scorePoseSecond = new Pose(92, 93, Math.toRadians(40)); //  Working Pose
-    private final Pose scorePoseSecond = new Pose(80, 114, Math.toRadians(27));
+    private final Pose scorePoseSecond = new Pose(90, 90, Math.toRadians(45));
     private final Pose scorePoseSecondControl = new Pose(92, 80, Math.toRadians(23)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose scorePoseThirdControl = new Pose(90, 50, Math.toRadians(23)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose scorePoseThird = new Pose(80, 114, Math.toRadians(27)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose aimingFirstBallTopRowPose = new Pose(86, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickFirstBallTopRowPose = new Pose(93, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickSecondBallTopRowPose = new Pose(96, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose scorePoseThird = new Pose(95, 92, Math.toRadians(45)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose aimingFirstBallTopRowPose = new Pose(90, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickFirstBallTopRowPose = new Pose(96, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickSecondBallTopRowPose = new Pose(97, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickThirdBallTopRowPose = new Pose(108, yTopRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickThirdBallTopRowControlPose = new Pose(90, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose aimingFirstBallMiddleRowPose = new Pose(80, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickFirstBallMiddleRowPose = new Pose(84, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickSecondBallMiddleRowPose = new Pose(93, yMidRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickSecondBallMiddleRowPoseGPP = new Pose(91, 60, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose aimingFirstBallMiddleRowPose = new Pose(88, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickFirstBallMiddleRowPose = new Pose(92, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickSecondBallMiddleRowPose = new Pose(98, yMidRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickSecondBallMiddleRowControlPose = new Pose(90, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickThirdBallMiddleRowPose = new Pose(109, yMidRowPurple-4, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickThirdBallMiddleRowControlPose = new Pose(90, yMidRowGreen-4, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
 
     //PPG Mid Row Paths
-    private final Pose pickSecondBallMiddleRowPosePPG = new Pose(97, yMidRowPurple-4, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickSecondBallMiddleRowPosePPG = new Pose(98, yMidRowPurple-4, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickSecondBallMiddleRowControlPosePPG = new Pose(94, yMidRowPurple-4, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickThirdBallMiddleRowPosePPG = new Pose(110, yMidRowPurple-4, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickThirdBallMiddleRowControlPosePPG = new Pose(100, yMidRowPurple-4, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
 
 //    private final Pose pickThirdBallMiddleRowPosePPG = new Pose(115, yMidRowPurple-7, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose leavePose = new Pose(100, 75, Math.toRadians(45)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose pickup1Pose = new Pose(82, 80, Math.toRadians(50)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose pickup1 = new Pose(90, 74, Math.toRadians(360)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose pickup2 = new Pose(115, 74, Math.toRadians(360)); // Highest (First Set) of Artifacts from the Spike Mark.
@@ -132,7 +132,7 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
         opmodeTimer.resetTimer();
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
-        follower.setStartingPose(startingPose);
+        follower.setStartingPose(startPose);
         //motif = order(Miller.huskyLens);
 
         // playTime.reset();
@@ -147,7 +147,10 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 .build();
 
         ///* Drive to pick the Second ball from Middle row PPG */
-
+         pickSecondBallMiddleRowPathPPG = follower.pathBuilder()
+                .addPath(new BezierCurve(pickFirstBallMiddleRowPose, pickSecondBallMiddleRowControlPosePPG, pickSecondBallMiddleRowPosePPG))
+                .setLinearHeadingInterpolation(pickFirstBallMiddleRowPose.getHeading(), pickSecondBallMiddleRowPosePPG.getHeading())
+                .build();
 
         /* Drive to pick the Third ball from top row */
         pickThirdBallMiddleRowPathPPG = follower.pathBuilder()
@@ -158,8 +161,8 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
     public void buildPaths() {
         ///* Drive to read the obelisk */
         ReadPath = follower.pathBuilder()
-                .addPath(new BezierLine(startingPose, readPose))
-                .setLinearHeadingInterpolation(startingPose.getHeading(),readPose.getHeading())
+                .addPath(new BezierLine(startPose, readPose))
+                .setLinearHeadingInterpolation(startPose.getHeading(),readPose.getHeading())
                 .build();
 
         ///* Turn to score position */
@@ -221,10 +224,6 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 .addPath(new BezierCurve(pickFirstBallMiddleRowPose,pickSecondBallMiddleRowControlPose, pickSecondBallMiddleRowPose))
                 .setLinearHeadingInterpolation(pickFirstBallMiddleRowPose.getHeading(),pickSecondBallMiddleRowPose.getHeading())
                 .build();
-        pickSecondBallMiddleRowPathGPP = follower.pathBuilder()
-                .addPath(new BezierCurve(pickFirstBallMiddleRowPose,pickSecondBallMiddleRowControlPose, pickSecondBallMiddleRowPoseGPP))
-                .setLinearHeadingInterpolation(pickFirstBallMiddleRowPose.getHeading(),pickSecondBallMiddleRowPose.getHeading())
-                .build();
 
         ///* Drive to pick the Third ball from top row */
         pickThirdBallMiddleRowPath = follower.pathBuilder()
@@ -232,6 +231,10 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 .setLinearHeadingInterpolation(pickSecondBallMiddleRowPose.getHeading(),pickThirdBallMiddleRowPose.getHeading())
                 .build();
 
+        leavePath = follower.pathBuilder()
+                .addPath(new BezierLine(scorePoseThird,leavePose))
+                .setLinearHeadingInterpolation(scorePoseThird.getHeading(), leavePose.getHeading())
+                .build();
 
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Pose,pickup1))
@@ -256,7 +259,8 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
 
                 break;
             case 11:
-                motif = order(Miller.huskyLens);
+                motif = 3;
+//                motif = order(Miller.huskyLens);
                 if(!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 0.75 && (motif==1 || motif==2 || motif==3)){
                     setPathState(1);
                 }
@@ -267,13 +271,13 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 }
                 break;
             case 1:
-                follower.setMaxPower(.9);
+                follower.setMaxPower(.85);
 
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Score Preload */
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(ScorePath,0.9, true);
+                    follower.followPath(ScorePath,0.85, true);
 //                    Miller.setShooterPower(100);
                     //Miller.setShooterVelocity(Miller.TARGET_VELOCITY);
                     setPathState(2);
@@ -297,10 +301,10 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                         Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
                         setPathState(200);
                     }else if ( motif == 3) {//PGP
-                        Miller.TARGET_MIN_VELOCITY_RIGHT = 1050;
+                        Miller.TARGET_MIN_VELOCITY_RIGHT = 1000;
                         Miller.TARGET_VELOCITY_RIGHT = 1100;
-                        Miller.TARGET_VELOCITY_LEFT = 1100;
-                        Miller.TARGET_MIN_VELOCITY_LEFT = 1050;
+                        Miller.TARGET_VELOCITY_LEFT = 1000;
+                        Miller.TARGET_MIN_VELOCITY_LEFT = 900;
                         Miller.setShooterVelocity(Reggie.SIDES.LEFT);
                         setPathState(300);
                     }else{
@@ -422,8 +426,11 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                     follower.followPath(pickThirdBallTopRowPath, 0.35,true);
                     Miller.setIntakePower(85);
                     //Miller.indexerPower(-10, Miller.leftIndexerServo);
-                    Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
-
+                    if(motif==2){
+                        Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
+                    }else{
+                        Miller.setShooterVelocity(Reggie.SIDES.LEFT);
+                    }
                     setPathState(108);
                 }
                 break;
@@ -454,15 +461,23 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 /**
                  * Wait for shooter to speed up then shoot
                  */
-                if (!follower.isBusy() && Miller.targetVelocityAcquired(Reggie.SIDES.LEFT)){
-                    //Miller.stopEverything();
-                    //Miller.setStoppers(false,false);
-                    Miller.setIntakePower(75);
-                    Miller.indexerPower(85, Miller.leftIndexerServo);
-                    //Miller.setSorterServoPosition(Miller.sortPositionRight);
-                    currentRow = Rows.MIDDLE_ROW;
-                    setPathState(100);
+                if(motif==2){
+                    if (!follower.isBusy() && Miller.targetVelocityAcquired(Reggie.SIDES.RIGHT)){
+                        Miller.setIntakePower(75);
+                        Miller.indexerPower(60, Miller.rightIndexerServo);
+                        currentRow = Rows.MIDDLE_ROW;
+                        setPathState(200);
+                    }
+
+                }else{
+                    if (!follower.isBusy() && Miller.targetVelocityAcquired(Reggie.SIDES.LEFT)){
+                        Miller.setIntakePower(75);
+                        Miller.indexerPower(85, Miller.leftIndexerServo);
+                        currentRow = Rows.MIDDLE_ROW;
+                        setPathState(100);
+                    }
                 }
+
                 break;
             case 111:
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>0.25){
@@ -481,8 +496,8 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                  * Picking up the First Purple Ball from Middle Row
                  */
                 if (!follower.isBusy()){
-                    follower.followPath(aimingFirstBallTopRowPath, 0.7,true);
-                    Miller.setSorterServoPosition(sortPositionRight);
+                    follower.followPath(pickFirstBallMiddleRowPath, 0.3,true);
+                    Miller.setSorterServoPosition(sortPositionMiddle);
                     Miller.setIntakePower(85);
                     //Miller.setStoppers(true, true);
                     setPathState(113);
@@ -493,7 +508,7 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                  * Pause a little to retrieve the first Purple Ball from Middle Row
                  */
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>0.55){
-                    follower.followPath(pickFirstBallMiddleRowPath);
+                    Miller.setSorterServoPosition(sortPositionMidLeft);
                     setPathState(114);
                     //follower.setMaxPower(.5);
                 }
@@ -503,8 +518,7 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                  * Advance to the Green Ball from Middle Row
                  */
                 if (!follower.isBusy()){
-                    Miller.setSorterServoPosition(sortPositionRight);
-                    follower.followPath(pickSecondBallMiddleRowPathGPP, 0.4,true);
+                    follower.followPath(pickSecondBallMiddleRowPath, 0.4,true);
 //                    follower.followPath(pickSecondBallMiddleRowPathPPG, 0.4,true);
                    // Miller.setSorterServoPosition(sortPositionMiddle);
                     Miller.setIntakePower(85);
@@ -518,10 +532,9 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                  * Pause to retrieve the Green Ball from Middle Row
                  */
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>0.15){
-                    Miller.setSorterServoPosition(sortPositionLeft);
-                    follower.followPath(pickThirdBallMiddleRowPath);
-                    Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
-                    setPathState(117);
+                    //Miller.setSorterServoPosition(sortPositionMidRight);
+                    Miller.setShooterVelocity(Reggie.SIDES.LEFT);
+                    setPathState(116);
                 }
                 break;
             case 116:
@@ -529,7 +542,7 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                  * Retrieve the Second Purple Ball From Middle Row
                  */
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>0.5){
-                    Miller.setSorterServoPosition(sortPositionMidLeft);
+                    Miller.setSorterServoPosition(sortPositionMidRight);
                     follower.followPath(pickThirdBallMiddleRowPath, 0.3,true);
 //                    follower.followPath(pickThirdBallMiddleRowPathPPG, 0.3,true);
                     Miller.setIntakePower(95);
@@ -541,8 +554,7 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 /**
                  * Pause to retrieve the Second Purple Ball from Middle Row
                  */
-                if (pathTimer.getElapsedTimeSeconds()>0.2){
-                    Miller.setSorterServoPosition(sortPositionMidRight);
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>0.35){
                     // Miller.setSorterServoPosition(sortPositionMidLeft);
                     //Miller.setStoppers(false, false);
                     setPathState(118);
@@ -553,12 +565,11 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                  * Drive to Score Position after retrieving Middle Row
                  */
                 follower.setMaxPower(0.9);
-                Miller.setSorterServoPosition(sortPositionMidRight);
                 if (!follower.isBusy()){
                     follower.followPath(scoreFromMiddleRowPath, 0.9,true);
 //                    follower.followPath(scoreFromMiddleRowPathPPG, 0.9,true);
                     //Miller.stopEverything();
-                    Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
+                    Miller.setShooterVelocity(Reggie.SIDES.LEFT);
 
                     setPathState(119);
                 }
@@ -582,9 +593,8 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                  * Shooting Green
                  */
                 if(pathTimer.getElapsedTimeSeconds()>0.15){
+                    follower.followPath(leavePath, 0.8,true);
                     Miller.stopEverything();
-                    DataStorage.currentPose = follower.getPose();
-                    DataStorage.Blue = false;
                     setPathState(-100);
                 }
                 break;
@@ -703,8 +713,6 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                     follower.followPath(pickFirstBallTopRowPath, 0.3,true);
                     Miller.setSorterServoPosition(sortPositionRight);
                     Miller.setIntakePower(85);
-                    Miller.indexerPower(0, Miller.rightIndexerServo);
-                    Miller.indexerPower(0, Miller.leftIndexerServo);
                     //Miller.setStoppers(true, true);
                     setPathState(209);
                 }
@@ -792,11 +800,9 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 if (pathTimer.getElapsedTimeSeconds() >= 0.10){
                     Miller.stopEverything();
                     follower.followPath(aimingFirstBallMiddleRowPath, 0.8,true);
-                    Miller.setSorterServoPosition(sortPositionRight);
+                    Miller.setSorterServoPosition(sortPositionMiddle);
                     Miller.setIntakePower(75);
                     Miller.setStoppers(true, true);
-                    Miller.indexerPower(0, Miller.rightIndexerServo);
-                    Miller.indexerPower(0, Miller.leftIndexerServo);
                     setPathState(218);
                 }
                 break;
@@ -812,34 +818,33 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 /**
                  * Picking up the First Purple Ball from Middle Row
                  */
-                if(pathTimer.getElapsedTimeSeconds()>0.45){
+                if (!follower.isBusy()){
+                    follower.followPath(pickFirstBallMiddleRowPath, 0.3,true);
                     Miller.setSorterServoPosition(sortPositionMidRight);
-                }
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>0.55){
+                    Miller.setIntakePower(85);
+                    //Miller.setStoppers(true, true);
                     setPathState(219);
-                    //follower.setMaxPower(.5);
                 }
                 break;
             case 219:
                 /**
                  * Pause a little to retrieve the first Purple Ball from Middle Row
                  */
-                if (!follower.isBusy()){
-                    follower.followPath(pickSecondBallMiddleRowPathGPP, 0.4,true);
-                    //Miller.setSorterServoPosition(sortPositionLeft);
-                    Miller.setIntakePower(85);
-                    //Miller.indexerPower(-5, Miller.leftIndexerServo);
-                    //Miller.setStoppers(true, true);
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>0.55){
                     setPathState(220);
+                    //follower.setMaxPower(.5);
                 }
                 break;
             case 220:
                 /**
                  * Advance to the Green Ball from Middle Row
                  */
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>0.15){
+                if (!follower.isBusy()){
+                    follower.followPath(pickSecondBallMiddleRowPath, 0.4,true);
                     Miller.setSorterServoPosition(sortPositionMidLeft);
-                    Miller.setShooterVelocity(Reggie.SIDES.LEFT);
+                    Miller.setIntakePower(85);
+                    //Miller.indexerPower(-5, Miller.leftIndexerServo);
+                    //Miller.setStoppers(true, true);
                     setPathState(221);
                 }
                 break;
@@ -847,11 +852,9 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 /**
                  * Pause to retrieve the second Green Ball from Middle Row
                  */
-                if (!follower.isBusy()){
-                    Miller.setSorterServoPosition(sortPositionMidLeft);
-                    follower.followPath(pickThirdBallMiddleRowPath, 0.45,true);
-                    Miller.setIntakePower(85);
-                    //Miller.indexerPower(-10, Miller.rightIndexerServo);
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>0.15){
+                    //Miller.setSorterServoPosition(sortPositionMidLeft);
+                    Miller.setShooterVelocity(Reggie.SIDES.LEFT);
                     setPathState(222);
                 }
                 break;
@@ -859,10 +862,12 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 /**
                  * Retrieve the Second Purple Ball From Middle Row
                  */
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>0.35){
-                    // Miller.setSorterServoPosition(sortPositionMidLeft);
-                    //Miller.setStoppers(false, false);
-                    setPathState(224);
+                if (!follower.isBusy()){
+                    Miller.setSorterServoPosition(sortPositionMidRight);
+                    follower.followPath(pickThirdBallMiddleRowPath, 0.45,true);
+                    Miller.setIntakePower(85);
+                    //Miller.indexerPower(-10, Miller.rightIndexerServo);
+                    setPathState(223);
                 }
                 break;
             case 223:
@@ -880,7 +885,6 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                  * Drive to Score Position after retrieving Middle Row
                  */
                 follower.setMaxPower(0.9);
-                Miller.setStoppers(true, true);
                 if (!follower.isBusy()){
                     follower.followPath(scoreFromMiddleRowPath, 0.9,true);
                     //Miller.stopEverything();
@@ -895,7 +899,7 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                  */
                 if (!follower.isBusy() && Miller.targetVelocityAcquired(Reggie.SIDES.LEFT)){
                     //Miller.stopEverything();
-                    Miller.setStoppers(false,true);
+                    Miller.setStoppers(false,false);
                     Miller.setIntakePower(75);
                     Miller.indexerPower(85, Miller.rightIndexerServo);
                     //Miller.setSorterServoPosition(Miller.sortPositionRight);
@@ -908,29 +912,35 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                  * Shooting Green from right shooter
                  */
                 if(Miller.targetVelocityAcquired(Reggie.SIDES.LEFT) && pathTimer.getElapsedTimeSeconds()>0.55){
-                    Miller.setStoppers(false,false);
+                    Miller.setStoppers(true,false);
                     Miller.indexerPower(0, Miller.rightIndexerServo);
                     Miller.indexerPower(80, Miller.leftIndexerServo);
                     Miller.setSorterServoPosition(sortPositionRight);
                     setPathState(227);
                 }
                 break;
-                case 227:
+            case 227:
                 /**
-                 * Shooting Green from right shooter
+                 * Shooting Purple from right shooter
                  */
                 if(Miller.targetVelocityAcquired(Reggie.SIDES.LEFT) && pathTimer.getElapsedTimeSeconds()>0.55){
                     Miller.setStoppers(false,false);
-                    Miller.indexerPower(80, Miller.rightIndexerServo);
+                    Miller.indexerPower(85, Miller.rightIndexerServo);
                     Miller.indexerPower(0, Miller.leftIndexerServo);
                     Miller.setSorterServoPosition(sortPositionRight);
-                    setPathState(228);
+                    setPathState(229);
+                    Miller.setShooterVelocity(Reggie.SIDES.LEFT);
                 }
                 break;
             case 228:
-
-                if(pathTimer.getElapsedTimeSeconds()>2.25){
-                    Miller.stopEverything();
+                /**
+                 * Shooting Purple from Left shooter
+                 */
+                if(Miller.targetVelocityAcquired(Reggie.SIDES.LEFT) && pathTimer.getElapsedTimeSeconds()>0.75){
+                    Miller.setStoppers(false,false);
+                    Miller.indexerPower(90, Miller.leftIndexerServo);
+                    Miller.indexerPower(85, Miller.rightIndexerServo);
+                    Miller.setSorterServoPosition(sortPositionLeft);
                     setPathState(229);
                 }
                 break;
@@ -938,16 +948,25 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 /**
                  * Shooting Purple from Left shooter
                  */
+                if(pathTimer.getElapsedTimeSeconds()>0.25){
+                    follower.followPath(leavePath, 0.8,true);
+                    Miller.stopEverything();
+                    setPathState(230);
+                }
+                break;
+            case 230:
+                /**
+                 * Shooting Purple from Left shooter
+                 */
                 if(!follower.isBusy()){
-                    DataStorage.currentPose = follower.getPose();
-                    DataStorage.Blue = false;
+                    requestOpModeStop();
                 }
                 break;
             case 300:
                 //PGP
                 //Waiting for shooter to speed up
-                if(Miller.targetVelocityAcquired(Reggie.SIDES.LEFT) && !follower.isBusy()){
-                    follower.setMaxPower(.85);
+                if(Miller.targetVelocityAcquired(Reggie.SIDES.LEFT)){
+                    Miller.setStoppers(true, false);
                     Miller.indexerPower(60, Miller.leftIndexerServo);
                     setPathState(301);
                 }
@@ -956,7 +975,7 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 //SHooting first purple
                 Miller.setSorterServoPosition(sortPositionMiddle);
                 if (pathTimer.getElapsedTimeSeconds() >= 0.75) {
-                    Miller.setStoppers(true, false);
+                    Miller.setStoppers(true, true);
                     Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
                     setPathState(302);
                 }
@@ -1076,8 +1095,6 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 if (!follower.isBusy()){
                     Miller.setSorterServoPosition(sortPositionMidLeft);
                     follower.followPath(pickThirdBallTopRowPath, 0.35,true);
-                    Miller.indexerPower(0,Miller.rightIndexerServo);
-                    Miller.indexerPower(0,Miller.leftIndexerServo);
                     Miller.setIntakePower(85);
                     //Miller.indexerPower(-10, Miller.leftIndexerServo);
                     Miller.setShooterVelocity(Reggie.SIDES.LEFT);
@@ -1120,7 +1137,7 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 if (pathTimer.getElapsedTimeSeconds() >= 0.10){
                     Miller.stopEverything();
                     follower.followPath(aimingFirstBallMiddleRowPath, 0.8,true);
-                    Miller.setSorterServoPosition(sortPositionRight);
+                    Miller.setSorterServoPosition(sortPositionMiddle);
                     Miller.setIntakePower(75);
                     Miller.setStoppers(true, true);
                     setPathState(316);
@@ -1151,7 +1168,7 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                  * Pause a little to retrieve the first Purple Ball from Middle Row
                  */
                 if(pathTimer.getElapsedTimeSeconds()>0.45){
-                    Miller.setSorterServoPosition(sortPositionMidRight);
+                    Miller.setSorterServoPosition(sortPositionMidLeft);
                 }
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>0.55){
                     setPathState(319);
@@ -1272,6 +1289,7 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                  * Shooting Purple from Left shooter
                  */
                 if(pathTimer.getElapsedTimeSeconds()>0.25){
+                    follower.followPath(leavePath, 0.8,true);
                     Miller.stopEverything();
                     setPathState(62);
                 }
@@ -1291,8 +1309,6 @@ public class ReggieRedCloseAuto_v3 extends OpMode {
                 break;
             case 62:
                 if(!follower.isBusy()){
-                    DataStorage.currentPose = follower.getPose();
-                    DataStorage.Blue = false;
                     requestOpModeStop();
                 }
         }

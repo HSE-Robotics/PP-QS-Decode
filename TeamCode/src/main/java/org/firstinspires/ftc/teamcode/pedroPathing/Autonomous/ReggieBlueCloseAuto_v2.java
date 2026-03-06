@@ -35,8 +35,8 @@ public class ReggieBlueCloseAuto_v2 extends OpMode {
     public int motif;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
-    private int GShoot = 20;
-    private int PShoot = 65;
+    private final int GShoot = 20;
+    private final int PShoot = 65;
     double sortPositionMiddle = 0.45;
     double sortPositionRight = 0.1;
     double sortPositionMidRight = 0.3;
@@ -1353,6 +1353,7 @@ public class ReggieBlueCloseAuto_v2 extends OpMode {
                 break;
             case 62:
                 if(!follower.isBusy()){
+                    startingPose = follower.getPose();
                     requestOpModeStop();
                 }
         }

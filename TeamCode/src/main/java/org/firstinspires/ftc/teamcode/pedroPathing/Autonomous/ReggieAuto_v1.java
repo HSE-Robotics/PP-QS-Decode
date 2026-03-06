@@ -34,8 +34,8 @@ public class ReggieAuto_v1 extends OpMode {
     public int motif;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
-    private int GShoot = 20;
-    private int PShoot = 65;
+    private final int GShoot = 20;
+    private final int PShoot = 65;
     double sortPositionMiddle = 0.45;
     double sortPositionRight = 0.1;
     double sortPositionLeft = 0.9;

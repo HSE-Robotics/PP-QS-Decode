@@ -28,9 +28,12 @@ public class Reggie {
     private Timer pathTimer;
     public static Pose poseFromAuto = new Pose(0,0,0);
     public static Pose scoringPose = new Pose(0,0,0);
+    public static Pose startingPose;
     public DcMotor intakeMotor = null;
     public DcMotorEx leftShooterMotor = null;
     public DcMotorEx rightShooterMotor = null;
+
+    public DcMotorEx parkingLift = null;
     public Servo sorterServo = null;
     public Servo rightStopper = null;
     public Servo leftStopper = null;
@@ -52,9 +55,13 @@ public class Reggie {
     public double TARGET_VELOCITY_RIGHT = 1300;
     public double TARGET_MIN_VELOCITY_RIGHT = 1200;
 
+    public double TARGET_VELOCITY_FIRST = 1150;
+    public double TARGET_MIN_VELOCITY_FIRST = 950;
+
     public enum SIDES{
         RIGHT,
-        LEFT
+        LEFT,
+        FIRST
     }
 
     public SIDES shootingSide = SIDES.RIGHT;
@@ -66,7 +73,7 @@ public class Reggie {
     public double leftStopperSTOP = 0.87;
     public double leftStopperPASS = 0.6;
     public double rightStopperPASS = 0.6;
-    public double rightStopperSTOP = 0.25;
+    public double rightStopperSTOP = 0.27;
     public double P = 38;
     public double F = 14;
 
@@ -91,6 +98,8 @@ public class Reggie {
         leftShooterMotor = hwMap.get(DcMotorEx.class, "LS");
         rightShooterMotor = hwMap.get(DcMotorEx.class, "RS");
 
+        parkingLift = hwMap.get(DcMotorEx.class, "lift");
+
         // Define and Initialize Servos
         sorterServo = hwMap.get(Servo.class, "indServo");
         rightStopper = hwMap.get(Servo.class, "RStopper");
@@ -112,6 +121,11 @@ public class Reggie {
         intakeMotor.setPower(0);
         leftShooterMotor.setPower(0);
         rightShooterMotor.setPower(0);
+
+        parkingLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        parkingLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        parkingLift.setPower(0);
         //leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pathTimer = new Timer();
@@ -122,13 +136,16 @@ public class Reggie {
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P,0,0,F);
 
+        rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         //leftShooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
         //rightShooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
 
         //Set all Sensors
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
 
-        usingPIDF = false;
+        usingPIDF = true;
 
         // Set servo initial position
         this.setSorterServoPosition(this.sortPositionMiddle); // Example initial position
@@ -154,6 +171,15 @@ public class Reggie {
             this.leftShooterMotor.setVelocity(this.TARGET_VELOCITY_RIGHT);
             this.rightShooterMotor.setVelocity(this.TARGET_VELOCITY_RIGHT);
         }
+    }
+
+    public void parking(){
+        this.parkingLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.parkingLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.parkingLift.setTargetPosition(this.parkingLift.getCurrentPosition() - 450);
+
+        this.parkingLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.parkingLift.setPower(0.75);
     }
 
     public void setIntakePower(double power) {
@@ -255,7 +281,10 @@ public class Reggie {
     public boolean targetVelocityAcquired(SIDES side){
         if (side == SIDES.LEFT) {
             return leftShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_LEFT && rightShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_LEFT;
+        }else if (side == SIDES.RIGHT){
+            return leftShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_RIGHT && rightShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_RIGHT;
         }
-        return leftShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_RIGHT && rightShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_RIGHT;
+        return leftShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_FIRST && rightShooterMotor.getVelocity() > TARGET_MIN_VELOCITY_FIRST;
+
     }
 }
