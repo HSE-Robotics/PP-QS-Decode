@@ -91,6 +91,7 @@ public boolean shooting;
     public int currentState = 0;
     public boolean indexerStop;
 
+
     /**
      * This initializes the drive motors as well as the Follower and motion Vectors.
      */
@@ -290,6 +291,8 @@ public boolean shooting;
                 Miller.indexerPower(0, Miller.rightIndexerServo);
                 Miller.setSorterServoPosition(sortPositionMiddle);
             }
+
+
         }
         if (gamepad1.squareWasPressed()) {
             if(currentState == 0){
