@@ -94,44 +94,44 @@ public class Reggie {
         // Define and Initialize Motors
         //poseFromAuto = new Pose();
 
-        intakeMotor = hwMap.get(DcMotor.class, "int");
+        //intakeMotor = hwMap.get(DcMotor.class, "int");
         leftShooterMotor = hwMap.get(DcMotorEx.class, "TS");
         rightShooterMotor = hwMap.get(DcMotorEx.class, "BS");
 
-        parkingLift = hwMap.get(DcMotorEx.class, "lift");
+        //parkingLift = hwMap.get(DcMotorEx.class, "lift");
 
         // Define and Initialize Servos
-        sorterServo = hwMap.get(Servo.class, "indServo");
-        rightStopper = hwMap.get(Servo.class, "RStopper");
-        leftStopper = hwMap.get(Servo.class, "LStopper");
-        leftIndexerServo = hwMap.get(CRServo.class, "LServo");
-        rightIndexerServo = hwMap.get(CRServo.class, "RServo");
+        //sorterServo = hwMap.get(Servo.class, "indServo");
+        //rightStopper = hwMap.get(Servo.class, "RStopper");
+        //leftStopper = hwMap.get(Servo.class, "LStopper");
+        //leftIndexerServo = hwMap.get(CRServo.class, "LServo");
+        //rightIndexerServo = hwMap.get(CRServo.class, "RServo");
 
         //Define and Initialize Sensors
-        huskyLens = hwMap.get(HuskyLens.class, "huskylens");
+        //huskyLens = hwMap.get(HuskyLens.class, "huskylens");
 //        rightColorSensor = hwMap.get(ColorSensor.class, "colorSensorRight");
 //        leftColorSensor = hwMap.get(ColorSensor.class, "colorSensorLeft");
 
 
-        idlerTime = new ElapsedTime();
+        //idlerTime = new ElapsedTime();
 
-        leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftIndexerServo.setDirection(DcMotorSimple.Direction.REVERSE);
+        //leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //leftIndexerServo.setDirection(DcMotorSimple.Direction.REVERSE);
         // Set all motors to zero power
-        intakeMotor.setPower(0);
+        //intakeMotor.setPower(0);
         leftShooterMotor.setPower(0);
         rightShooterMotor.setPower(0);
 
-        parkingLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //parkingLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        parkingLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        parkingLift.setPower(0);
+        //parkingLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //parkingLift.setPower(0);
         //leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        pathTimer = new Timer();
+        //pathTimer = new Timer();
 
         // Set all motors to run without encoders
-        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P,0,0,F);
@@ -143,12 +143,12 @@ public class Reggie {
         //rightShooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
 
         //Set all Sensors
-        huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
+        //huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
 
         usingPIDF = true;
 
         // Set servo initial position
-        this.setSorterServoPosition(this.sortPositionMiddle); // Example initial position
+        //this.setSorterServoPosition(this.sortPositionMiddle); // Example initial position
 
     }
 
