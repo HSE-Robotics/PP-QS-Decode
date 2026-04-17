@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.Autonomous;
+package org.firstinspires.ftc.teamcode.pedroPathing.Autonomous.ReggieMiller;
 //import com.bylazar.configurables.annotations.Configurable;
 //import com.bylazar.telemetry.PanelsTelemetry;
 //import com.bylazar.telemetry.TelemetryManager;
@@ -12,12 +12,11 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Reggie;
-
+import org.firstinspires.ftc.teamcode.pedroPathing.TeleOp.DataStorage;
 
 
 /**
@@ -25,9 +24,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Reggie;
  * @author Gerry DLIII - 18908 Mighty Hawks
  * @version 1.0, 02/11/2024
  */
-@Disabled
-@Autonomous(name = "RED_FAR_LM3_Tournament", group = "LM3/TOUR Reggie")
-public class ReggieRedFAR_v2 extends OpMode {
+
+@Autonomous(name = "RED_FAR_STATE", group = "State Reggie Far")
+public class ReggieRedFAR_v4 extends OpMode {
     //private static final Logger log = LoggerFactory.getLogger(AyCrush2P_PP.class);
     //Pedro Pathing Variables
 
@@ -39,7 +38,6 @@ public class ReggieRedFAR_v2 extends OpMode {
     }
     private Follower follower;
     private Reggie Miller;
-    public static Pose startingPose;
     public int motif;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
@@ -48,13 +46,13 @@ public class ReggieRedFAR_v2 extends OpMode {
 
     public static double yMidRowPurple = 60;
     public static double yMidRowGreen = 62;
-    public static double yBotRowPurple = 33;
-    public static double yBotRowGreen = 36;
+    public static double yBotRowPurple = 34;
+    public static double yBotRowGreen = 31;
     int shooterPower;
     int GshooterPower;
     int artifact;
-    public static double shootingAngleFirst = 66;
-    public static double shootingAngleSecond = 69;
+    public static double shootingAngleFirst = 69;
+    public static double shootingAngleSecond = 67;
     double sortPositionMiddle = 0.45;
     double sortPositionRight = 0.1;
     double sortPositionMidRight = 0.25;
@@ -63,18 +61,18 @@ public class ReggieRedFAR_v2 extends OpMode {
 
     private Path Start;
     public PathChain ReadPos, Score, Park, aimingFirstBallBotRowPath, pickFirstBallBotRowPath, pickThirdBallBotRowPath,
-            pickSecondBallBotRowPath, scoreFromBotRowPath;
-    private final Pose startPose = new Pose(87, 9, Math.toRadians(90)); // Start Pose of our robot.
+            pickSecondBallBotRowPath, scoreFromBotRowPath,startToLeave;
+    private final Pose startingPose = new Pose(87, 9, Math.toRadians(90)); // Start Pose of our robot.
     private final Pose readPos = new Pose(87, 40, Math.toRadians(88)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
-    private final Pose scorePose = new Pose(83, 28, Math.toRadians(shootingAngleFirst)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose secondScorePose = new Pose(85, 26, Math.toRadians(shootingAngleSecond)); // Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose scorePose = new Pose(85, 16, Math.toRadians(shootingAngleFirst)); // Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose secondScorePose = new Pose(85, 18.5, Math.toRadians(shootingAngleSecond)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose scoreSecondControlPose = new Pose(110, 25, Math.toRadians(shootingAngleFirst)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose park = new Pose(109, 14, Math.toRadians(0)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose aimingFirstBallBotRowPose = new Pose(90, yBotRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickFirstBallBotRowPose = new Pose(105, yBotRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickSecondBallBotRowPose = new Pose(109, yBotRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallBotRowPose = new Pose(122, yBotRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickSecondBallBotRowControlPose = new Pose(96, yBotRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose park = new Pose(137, 9.6, Math.toRadians(0)); // Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose aimingFirstBallBotRowPose = new Pose(85, yBotRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickFirstBallBotRowPose = new Pose(90, yBotRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickSecondBallBotRowPose = new Pose(97, yBotRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickThirdBallBotRowPose = new Pose(100, yBotRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose pickSecondBallBotRowControlPose = new Pose(90, yBotRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     public Rows currentRow = Rows.BOTTOM_ROW;
 
 
@@ -101,11 +99,11 @@ public class ReggieRedFAR_v2 extends OpMode {
         opmodeTimer.resetTimer();
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
-        follower.setStartingPose(startPose);
-        Miller.TARGET_MIN_VELOCITY_RIGHT = 1350;
+        follower.setStartingPose(startingPose);
+        Miller.TARGET_MIN_VELOCITY_RIGHT = 1300;
         Miller.TARGET_VELOCITY_RIGHT = 1400;
         Miller.TARGET_MIN_VELOCITY_LEFT = 1300;
-        Miller.TARGET_VELOCITY_LEFT = 1350;
+        Miller.TARGET_VELOCITY_LEFT = 1400;
         //Rows currentRow = Rows.BOTTOM_ROW;
         //motif = order(Miller.huskyLens);
 
@@ -115,8 +113,8 @@ public class ReggieRedFAR_v2 extends OpMode {
     public void buildPaths() {
         /* This is our grabPickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         ReadPos = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, readPos))
-                .setLinearHeadingInterpolation(startPose.getHeading(),readPos.getHeading())
+                .addPath(new BezierLine(startingPose, readPos))
+                .setLinearHeadingInterpolation(startingPose.getHeading(),readPos.getHeading())
                 .build();
         /* This is our scorePickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         Score = follower.pathBuilder()
@@ -148,7 +146,7 @@ public class ReggieRedFAR_v2 extends OpMode {
 
         /* Drive to pick the Third ball from top row */
         pickThirdBallBotRowPath = follower.pathBuilder()
-                .addPath(new BezierCurve(pickSecondBallBotRowPose, pickThirdBallBotRowPose))
+                .addPath(new BezierLine(pickSecondBallBotRowPose, pickThirdBallBotRowPose))
                 .setLinearHeadingInterpolation(pickSecondBallBotRowPose.getHeading(),pickThirdBallBotRowPose.getHeading())
                 .build();
 
@@ -156,6 +154,10 @@ public class ReggieRedFAR_v2 extends OpMode {
         scoreFromBotRowPath = follower.pathBuilder()
                 .addPath(new BezierCurve(pickThirdBallBotRowPose, scoreSecondControlPose ,secondScorePose))
                 .setLinearHeadingInterpolation(pickThirdBallBotRowPose.getHeading(),secondScorePose.getHeading())
+                .build();
+        startToLeave = follower.pathBuilder()
+                .addPath(new BezierLine(startingPose,park))
+                .setLinearHeadingInterpolation(startingPose.getHeading(), park.getHeading())
                 .build();
     }
 
@@ -170,7 +172,7 @@ public class ReggieRedFAR_v2 extends OpMode {
 
                 break;
             case 11:
-                motif = order(Miller.huskyLens);
+                motif = 2;
 
                 if(pathTimer.getElapsedTimeSeconds() >= 1 && (motif==1 || motif==2 || motif==3)){
                     Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
@@ -190,7 +192,11 @@ public class ReggieRedFAR_v2 extends OpMode {
                 break;
             case 2:
                 if(!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >=0.5 ){
-                    if ( motif == 1) {
+                    if ( motif == 2) {
+                        setPathState(200);
+                    }else if ( motif == 3) {
+                        setPathState(300);
+                    }else{
                         setPathState(100);
 
                         Miller.TARGET_MIN_VELOCITY_RIGHT = 1350;
@@ -198,10 +204,6 @@ public class ReggieRedFAR_v2 extends OpMode {
                         Miller.TARGET_MIN_VELOCITY_LEFT = 1350;
                         Miller.TARGET_VELOCITY_LEFT = 1450;
                         Miller.setShooterVelocity(Reggie.SIDES.LEFT);
-                    }else if ( motif == 2) {
-                        setPathState(200);
-                    }else if ( motif == 3) {
-                        setPathState(300);
                     }
                 }
                 if (pathTimer.getElapsedTimeSeconds() >= 5) {
@@ -249,7 +251,7 @@ public class ReggieRedFAR_v2 extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds()>=0.850) {
                     follower.followPath(aimingFirstBallBotRowPath, 0.85, true);
                     Miller.setShooterPower(0);
-                    if(currentRow==Rows.BOTTOM_ROW) {
+                    if(currentRow== Rows.BOTTOM_ROW) {
                         setPathState(105);
                     }else{
                         setPathState(67);
@@ -321,7 +323,7 @@ public class ReggieRedFAR_v2 extends OpMode {
                 }
                 break;
             case 203:
-                if (pathTimer.getElapsedTimeSeconds() >= 1.250 && Miller.targetVelocityAcquired(Reggie.SIDES.LEFT)){
+                if (pathTimer.getElapsedTimeSeconds() >= 1.50 && Miller.targetVelocityAcquired(Reggie.SIDES.LEFT)){
                     Miller.setIntakePower(80);
                     Miller.setSorterServoPosition(sortPositionMidLeft);
                     setPathState(204);
@@ -329,9 +331,11 @@ public class ReggieRedFAR_v2 extends OpMode {
                 break;
             case 204:
                 if(pathTimer.getElapsedTimeSeconds()>=0.850) {
+                    Miller.indexerPower(0, Miller.rightIndexerServo);
+                    Miller.indexerPower(0, Miller.leftIndexerServo);
                     follower.followPath(aimingFirstBallBotRowPath, 0.85, true);
                     Miller.setShooterPower(0);
-                    if(currentRow==Rows.BOTTOM_ROW) {
+                    if(currentRow== Rows.BOTTOM_ROW) {
                         setPathState(205);
                     }else{
                         setPathState(67);
@@ -377,12 +381,11 @@ public class ReggieRedFAR_v2 extends OpMode {
                 break;
             case 300:
                 //PGP
-                Miller.setIntakePower(0);
                 Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
                 if((Miller.targetVelocityAcquired(Reggie.SIDES.RIGHT) && (pathTimer.getElapsedTimeSeconds() >= 2))){
                     Miller.setStoppers(true, false);
                     Miller.setSorterServoPosition(sortPositionLeft);
-                    if (pathTimer.getElapsedTimeSeconds() >= 3) {
+                    if (pathTimer.getElapsedTimeSeconds() >= 1.5) {
                     Miller.indexerPower(0, Miller.rightIndexerServo);
                     Miller.indexerPower(80, Miller.leftIndexerServo);
                     setPathState(301);
@@ -391,15 +394,14 @@ public class ReggieRedFAR_v2 extends OpMode {
 
                 break;
             case 301:
-                if(pathTimer.getElapsedTimeSeconds()>0.650){
+                if(pathTimer.getElapsedTimeSeconds()>0.50){
                     Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
                     Miller.setStoppers(false, true);
                     setPathState(302);
                 }
                 break;
             case 302:
-                if(pathTimer.getElapsedTimeSeconds()>0.850 && Miller.targetVelocityAcquired(Reggie.SIDES.RIGHT)){
-                    Miller.setStoppers(false, false);
+                if(pathTimer.getElapsedTimeSeconds()>0.50 && Miller.targetVelocityAcquired(Reggie.SIDES.RIGHT)){
                     Miller.setSorterServoPosition(sortPositionMiddle);
                     Miller.setIntakePower(0);
                     Miller.indexerPower(80, Miller.rightIndexerServo);
@@ -408,19 +410,17 @@ public class ReggieRedFAR_v2 extends OpMode {
                 }
                 break;
             case 303:
-                if (pathTimer.getElapsedTimeSeconds() >= 1.250 && Miller.targetVelocityAcquired(Reggie.SIDES.LEFT)){
-                    Miller.indexerPower(0, Miller.rightIndexerServo);
-                    Miller.indexerPower(80, Miller.leftIndexerServo);
-                    Miller.setIntakePower(80);
-                    Miller.setSorterServoPosition(sortPositionMidLeft);
+                if (pathTimer.getElapsedTimeSeconds() >= 0.50){
+                    Miller.setStoppers(false, false
+                    );
                     setPathState(304);
                 }
                 break;
             case 304:
-                if(pathTimer.getElapsedTimeSeconds()>=0.850) {
+                if(pathTimer.getElapsedTimeSeconds()>=0.250) {
                     follower.followPath(aimingFirstBallBotRowPath, 0.85, true);
                     Miller.setShooterPower(0);
-                    if(currentRow==Rows.BOTTOM_ROW) {
+                    if(currentRow== Rows.BOTTOM_ROW) {
                         Miller.indexerPower(0, Miller.leftIndexerServo);
                         Miller.indexerPower(0, Miller.rightIndexerServo);
                         setPathState(305);
@@ -469,6 +469,26 @@ public class ReggieRedFAR_v2 extends OpMode {
             case 67:
                 follower.followPath(Park);
                 Miller.stopEverything();
+                setPathState(68);
+                break;
+                case 68:
+                    if(!follower.isBusy()){
+                        DataStorage.currentPose = follower.getPose();
+                        DataStorage.Blue = false;
+                        DataStorage.FAR = true;
+                        requestOpModeStop();
+                    }
+                    break;
+            case 900:
+                if(!follower.isBusy()){
+                    follower.followPath(startToLeave);
+                    setPathState(901);
+                }
+                break;
+            case 901:
+                if(!follower.isBusy()){
+                    requestOpModeStop();
+                }
                 break;
         }
     }

@@ -42,7 +42,7 @@ public class ReggieTeleop_v2 extends OpMode {
     private Reggie Miller;
     public static Pose startingPose = Reggie.poseFromAuto;
     public static Pose scoringPose = Reggie.scoringPose;
-    public PathChain toPickup, pickupToShoot;
+    public PathChain toPickup, pickupToShoot, ToShoot;
 
     public enum ScoringState {
         IDLE,
@@ -173,6 +173,10 @@ public boolean shooting;
                 .addPath(new BezierLine(intake, shoot))
                 .setConstantHeadingInterpolation(shoot.getHeading())
                 .build();
+        ToShoot = follower.pathBuilder()
+                .addPath(new BezierLine(currentPose1, shoot))
+                .setConstantHeadingInterpolation(shoot.getHeading())
+                .build();
 
 //        lBlue = colorSensorLeft.blue();
 //        lGreen = colorSensorLeft.green();
@@ -294,18 +298,16 @@ public boolean shooting;
 
 
         }
+        /*
         if (gamepad1.squareWasPressed()) {
             if(currentState == 0){
-                indexerStop = false;
-                Miller.leftIndexerServo.setDirection(DcMotorSimple.Direction.FORWARD);
-                Miller.rightIndexerServo.setDirection(DcMotorSimple.Direction.REVERSE);
-                follower.followPath(toPickup);
-                Miller.setStoppers(false,false);
-                Miller.setShooterPower(-20);
-                currentState = 1;
+                follower.followPath(ToShoot);
+                Miller.TARGET_MIN_VELOCITY_LEFT = longDistanceVelocity - 500;
+                Miller.TARGET_VELOCITY_LEFT = longDistanceVelocity + 50 ;
+                Miller.setShooterVelocity(Reggie.SIDES.LEFT);
+                currentState = 3;
             }else if (currentState == 1){
 
-                indexerStop = true;
                 currentState = 2;
             }
             else if (currentState == 2){
@@ -314,8 +316,8 @@ public boolean shooting;
                 Miller.setShooterPower(0);
                 Miller.setStoppers(true,true);
                 follower.followPath(pickupToShoot);
-                Miller.TARGET_MIN_VELOCITY_LEFT = longDistanceVelocity - 100;
-                Miller.TARGET_VELOCITY_LEFT = longDistanceVelocity + 10 ;
+                Miller.TARGET_MIN_VELOCITY_LEFT = longDistanceVelocity;
+                Miller.TARGET_VELOCITY_LEFT = longDistanceVelocity + 100 ;
                 Miller.setShooterVelocity(Reggie.SIDES.LEFT);
 
                 currentState = 3;
@@ -341,9 +343,11 @@ public boolean shooting;
             Miller.TARGET_VELOCITY_LEFT = (Math.sqrt(range) * velocityMultiplier);
             Miller.setShooterVelocity(Reggie.SIDES.LEFT);
                 shooting = true;
-            }*/
+            }
 
 //            Miller.setShooterVelocity(closeDistanceVelocity);
+
+
         } else if (gamepad1.cross) {
             Miller.setShooterPower(0);
             //shooting = false;

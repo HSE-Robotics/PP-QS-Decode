@@ -30,8 +30,8 @@ public class Reggie {
     public static Pose scoringPose = new Pose(0,0,0);
     public static Pose startingPose;
     public DcMotor intakeMotor = null;
-    public DcMotorEx leftShooterMotor = null;
-    public DcMotorEx rightShooterMotor = null;
+    public DcMotorEx leftShooterMotor;
+    public DcMotorEx rightShooterMotor;
 
     public DcMotorEx parkingLift = null;
     public Servo sorterServo = null;
@@ -52,19 +52,19 @@ public class Reggie {
     StoppersStates stoppersStates = StoppersStates.STOP;
     public double TARGET_VELOCITY_LEFT = 1400;
     public double TARGET_MIN_VELOCITY_LEFT = 1200;
-    public double TARGET_VELOCITY_RIGHT = 1300;
-    public double TARGET_MIN_VELOCITY_RIGHT = 1200;
+    public double TARGET_VELOCITY_RIGHT = 700;
+    public double TARGET_MIN_VELOCITY_RIGHT = 600;
 
-    public double TARGET_VELOCITY_FIRST = 1150;
-    public double TARGET_MIN_VELOCITY_FIRST = 950;
+    public double TARGET_VELOCITY_FIRST = 0;
+    public double TARGET_MIN_VELOCITY_FIRST = 0;
 
     public enum SIDES{
-        RIGHT,
         LEFT,
+        RIGHT,
         FIRST
     }
 
-    public SIDES shootingSide = SIDES.RIGHT;
+    public SIDES shootingSide = SIDES.LEFT;
     public double sortPositionMiddle = 0.45;
     public double sortPositionRight = 0.05;
     public double sortPositionLeft = 0.9;
@@ -74,8 +74,8 @@ public class Reggie {
     public double leftStopperPASS = 0.6;
     public double rightStopperPASS = 0.6;
     public double rightStopperSTOP = 0.27;
-    public double P = 38;
-    public double F = 14;
+    public double P = 15;
+    public double F = 16;
 
     // HardwareMap object
     private HardwareMap hwMap = null;
@@ -95,8 +95,8 @@ public class Reggie {
         //poseFromAuto = new Pose();
 
         intakeMotor = hwMap.get(DcMotor.class, "int");
-        leftShooterMotor = hwMap.get(DcMotorEx.class, "LS");
-        rightShooterMotor = hwMap.get(DcMotorEx.class, "RS");
+        leftShooterMotor = hwMap.get(DcMotorEx.class, "TS");
+        rightShooterMotor = hwMap.get(DcMotorEx.class, "BS");
 
         parkingLift = hwMap.get(DcMotorEx.class, "lift");
 
@@ -167,9 +167,12 @@ public class Reggie {
         if (side == SIDES.LEFT) {
             this.leftShooterMotor.setVelocity(this.TARGET_VELOCITY_LEFT);
             this.rightShooterMotor.setVelocity(this.TARGET_VELOCITY_LEFT);
-        } else {
+        } else if (side == SIDES.RIGHT){
             this.leftShooterMotor.setVelocity(this.TARGET_VELOCITY_RIGHT);
             this.rightShooterMotor.setVelocity(this.TARGET_VELOCITY_RIGHT);
+        }else {
+            this.leftShooterMotor.setVelocity(0);
+            this.rightShooterMotor.setVelocity(0);
         }
     }
 

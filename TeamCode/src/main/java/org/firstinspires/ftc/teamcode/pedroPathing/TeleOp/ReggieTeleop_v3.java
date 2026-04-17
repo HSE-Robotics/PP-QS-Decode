@@ -170,7 +170,7 @@ public boolean shooting;
         }
 
         //Flywheels
-        if (gamepad1.square) {
+        /*if (gamepad1.square) {
             Miller.TARGET_MIN_VELOCITY_LEFT = longDistanceVelocity - 100;
             Miller.TARGET_VELOCITY_LEFT = longDistanceVelocity;
             Miller.setShooterVelocity(Reggie.SIDES.LEFT);
@@ -190,7 +190,7 @@ public boolean shooting;
                 Miller.TARGET_VELOCITY_LEFT = range*velocityMultiplier;
                 Miller.setShooterVelocity(Reggie.SIDES.LEFT);
                 shooting = true;
-            }*/
+
 
 //            Miller.setShooterVelocity(closeDistanceVelocity);
         } else if (gamepad1.cross) {
@@ -198,12 +198,13 @@ public boolean shooting;
             shooting = false;
 
         }
+
         if(range>0 && shooting){
             Miller.TARGET_MIN_VELOCITY_LEFT = (range * velocityMultiplier) - 100;
             Miller.TARGET_VELOCITY_LEFT = range*velocityMultiplier;
             Miller.setShooterVelocity(Reggie.SIDES.LEFT);
         }
-
+        */
         //Sorter
         if (gamepad1.dpad_left) {
             Miller.setSorterServoPosition(Miller.sortPositionLeft);

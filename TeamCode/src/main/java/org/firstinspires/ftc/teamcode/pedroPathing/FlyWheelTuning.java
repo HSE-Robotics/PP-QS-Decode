@@ -23,8 +23,8 @@ public class FlyWheelTuning extends OpMode {
 
     @Override
     public void init() {
-        rightShooter = hardwareMap.get(DcMotorEx.class, "RS");
-        leftShooter = hardwareMap.get(DcMotorEx.class, "LS");
+        rightShooter = hardwareMap.get(DcMotorEx.class, "BS");
+        leftShooter = hardwareMap.get(DcMotorEx.class, "TS");
 
         rightShooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         leftShooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
