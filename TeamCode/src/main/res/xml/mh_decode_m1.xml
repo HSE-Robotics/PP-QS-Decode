@@ -1,4 +1,5 @@
 <Robot type="FirstInspires-FTC">
+    <Webcam name="Webcam 1" serialNumber="20240420112206" />
     <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
 
         <LynxModule name="Expansion Hub 2" port="2">

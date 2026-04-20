@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.Autonomous.ReggieMiller;
+package org.firstinspires.ftc.teamcode.pedroPathing.Autonomous;
 //import com.bylazar.configurables.annotations.Configurable;
 //import com.bylazar.telemetry.PanelsTelemetry;
 //import com.bylazar.telemetry.TelemetryManager;
@@ -25,8 +25,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.TeleOp.DataStorage;
  * @version 1.0, 02/11/2024
  */
 
-@Autonomous(name = "RED_FAR_LEAVE", group = "Regionals Reggie Far")
-public class ReggieRedFAR_LEAVE extends OpMode {
+@Autonomous(name = "RED_FAR_STATE", group = "State Reggie Far")
+public class ReggieRedFAR_v4 extends OpMode {
     //private static final Logger log = LoggerFactory.getLogger(AyCrush2P_PP.class);
     //Pedro Pathing Variables
 
@@ -63,11 +63,11 @@ public class ReggieRedFAR_LEAVE extends OpMode {
     public PathChain ReadPos, Score, Park, aimingFirstBallBotRowPath, pickFirstBallBotRowPath, pickThirdBallBotRowPath,
             pickSecondBallBotRowPath, scoreFromBotRowPath,startToLeave;
     private final Pose startingPose = new Pose(87, 9, Math.toRadians(90)); // Start Pose of our robot.
-    private final Pose readPos = new Pose(87, 12, Math.toRadians(88)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    private final Pose readPos = new Pose(87, 40, Math.toRadians(88)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose scorePose = new Pose(85, 16, Math.toRadians(shootingAngleFirst)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose secondScorePose = new Pose(85, 18.5, Math.toRadians(shootingAngleSecond)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose scoreSecondControlPose = new Pose(110, 25, Math.toRadians(shootingAngleFirst)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose park = new Pose(128, 9, Math.toRadians(90)); // Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose park = new Pose(137, 9.6, Math.toRadians(0)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose aimingFirstBallBotRowPose = new Pose(85, yBotRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickFirstBallBotRowPose = new Pose(90, yBotRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose pickSecondBallBotRowPose = new Pose(97, yBotRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
@@ -326,7 +326,7 @@ public class ReggieRedFAR_LEAVE extends OpMode {
                 if (pathTimer.getElapsedTimeSeconds() >= 1.50 && Miller.targetVelocityAcquired(Reggie.SIDES.LEFT)){
                     Miller.setIntakePower(80);
                     Miller.setSorterServoPosition(sortPositionMidLeft);
-                    setPathState(67);
+                    setPathState(204);
                 }
                 break;
             case 204:

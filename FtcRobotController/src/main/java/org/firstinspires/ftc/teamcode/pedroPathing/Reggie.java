@@ -30,8 +30,8 @@ public class Reggie {
     public static Pose scoringPose = new Pose(0,0,0);
     public static Pose startingPose;
     public DcMotor intakeMotor = null;
-    public DcMotorEx leftShooterMotor;
-    public DcMotorEx rightShooterMotor;
+    public DcMotorEx leftShooterMotor = null;
+    public DcMotorEx rightShooterMotor = null;
 
     public DcMotorEx parkingLift = null;
     public Servo sorterServo = null;
@@ -52,19 +52,19 @@ public class Reggie {
     StoppersStates stoppersStates = StoppersStates.STOP;
     public double TARGET_VELOCITY_LEFT = 1400;
     public double TARGET_MIN_VELOCITY_LEFT = 1200;
-    public double TARGET_VELOCITY_RIGHT = 700;
-    public double TARGET_MIN_VELOCITY_RIGHT = 600;
+    public double TARGET_VELOCITY_RIGHT = 1300;
+    public double TARGET_MIN_VELOCITY_RIGHT = 1200;
 
-    public double TARGET_VELOCITY_FIRST = 0;
-    public double TARGET_MIN_VELOCITY_FIRST = 0;
+    public double TARGET_VELOCITY_FIRST = 1150;
+    public double TARGET_MIN_VELOCITY_FIRST = 950;
 
     public enum SIDES{
-        LEFT,
         RIGHT,
+        LEFT,
         FIRST
     }
 
-    public SIDES shootingSide = SIDES.LEFT;
+    public SIDES shootingSide = SIDES.RIGHT;
     public double sortPositionMiddle = 0.45;
     public double sortPositionRight = 0.05;
     public double sortPositionLeft = 0.9;
@@ -72,10 +72,10 @@ public class Reggie {
     // FIND THIS VALUES
     public double leftStopperSTOP = 0.87;
     public double leftStopperPASS = 0.6;
-    public double rightStopperPASS = 0.6;
+    public double rightStopperPASS = 0.55;
     public double rightStopperSTOP = 0.27;
-    public double P = 15;
-    public double F = 16;
+    public double P = 38;
+    public double F = 14;
 
     // HardwareMap object
     private HardwareMap hwMap = null;
@@ -94,44 +94,46 @@ public class Reggie {
         // Define and Initialize Motors
         //poseFromAuto = new Pose();
 
-        //intakeMotor = hwMap.get(DcMotor.class, "int");
-        leftShooterMotor = hwMap.get(DcMotorEx.class, "TS");
-        rightShooterMotor = hwMap.get(DcMotorEx.class, "BS");
+        intakeMotor = hwMap.get(DcMotor.class, "int");
+        leftShooterMotor = hwMap.get(DcMotorEx.class, "LS");
+        rightShooterMotor = hwMap.get(DcMotorEx.class, "RS");
 
-        //parkingLift = hwMap.get(DcMotorEx.class, "lift");
+        parkingLift = hwMap.get(DcMotorEx.class, "lift");
 
         // Define and Initialize Servos
-        //sorterServo = hwMap.get(Servo.class, "indServo");
-        //rightStopper = hwMap.get(Servo.class, "RStopper");
-        //leftStopper = hwMap.get(Servo.class, "LStopper");
-        //leftIndexerServo = hwMap.get(CRServo.class, "LServo");
-        //rightIndexerServo = hwMap.get(CRServo.class, "RServo");
+        sorterServo = hwMap.get(Servo.class, "indServo");
+        rightStopper = hwMap.get(Servo.class, "RStopper");
+        leftStopper = hwMap.get(Servo.class, "LStopper");
+        leftIndexerServo = hwMap.get(CRServo.class, "LServo");
+        rightIndexerServo = hwMap.get(CRServo.class, "RServo");
+
+
 
         //Define and Initialize Sensors
-        //huskyLens = hwMap.get(HuskyLens.class, "huskylens");
+        huskyLens = hwMap.get(HuskyLens.class, "huskylens");
 //        rightColorSensor = hwMap.get(ColorSensor.class, "colorSensorRight");
 //        leftColorSensor = hwMap.get(ColorSensor.class, "colorSensorLeft");
 
 
-        //idlerTime = new ElapsedTime();
+        idlerTime = new ElapsedTime();
 
-        //leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        //leftIndexerServo.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftIndexerServo.setDirection(DcMotorSimple.Direction.REVERSE);
         // Set all motors to zero power
-        //intakeMotor.setPower(0);
+        intakeMotor.setPower(0);
         leftShooterMotor.setPower(0);
         rightShooterMotor.setPower(0);
 
-        //parkingLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        parkingLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //parkingLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //parkingLift.setPower(0);
+        parkingLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        parkingLift.setPower(0);
         //leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //pathTimer = new Timer();
+        pathTimer = new Timer();
 
         // Set all motors to run without encoders
-        //intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P,0,0,F);
@@ -143,12 +145,12 @@ public class Reggie {
         //rightShooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
 
         //Set all Sensors
-        //huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
+        huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
 
         usingPIDF = true;
 
         // Set servo initial position
-        //this.setSorterServoPosition(this.sortPositionMiddle); // Example initial position
+        this.setSorterServoPosition(this.sortPositionMiddle); // Example initial position
 
     }
 
@@ -167,12 +169,9 @@ public class Reggie {
         if (side == SIDES.LEFT) {
             this.leftShooterMotor.setVelocity(this.TARGET_VELOCITY_LEFT);
             this.rightShooterMotor.setVelocity(this.TARGET_VELOCITY_LEFT);
-        } else if (side == SIDES.RIGHT){
+        } else {
             this.leftShooterMotor.setVelocity(this.TARGET_VELOCITY_RIGHT);
             this.rightShooterMotor.setVelocity(this.TARGET_VELOCITY_RIGHT);
-        }else {
-            this.leftShooterMotor.setVelocity(0);
-            this.rightShooterMotor.setVelocity(0);
         }
     }
 

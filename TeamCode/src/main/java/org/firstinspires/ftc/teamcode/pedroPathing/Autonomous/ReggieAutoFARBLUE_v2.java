@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.Autonomous.ReggieMiller;
+package org.firstinspires.ftc.teamcode.pedroPathing.Autonomous;
 //import com.bylazar.configurables.annotations.Configurable;
 //import com.bylazar.telemetry.PanelsTelemetry;
 //import com.bylazar.telemetry.TelemetryManager;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
@@ -12,12 +11,13 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Reggie;
-import org.firstinspires.ftc.teamcode.pedroPathing.TeleOp.DataStorage;
+
 
 
 /**
@@ -25,8 +25,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.TeleOp.DataStorage;
  * @author Gerry DLIII - 18908 Mighty Hawks
  * @version 1.0, 02/11/2024
  */
-@Autonomous(name = "BLUE_FAR_Regionals", group = "Regionals Reggie Far")
-public class ReggieAutoFARBLUE_v3 extends OpMode {
+@Disabled
+@Autonomous(name = "Reggie_Auto_BLUE_FAR", group = "LM1 Reggie")
+public class ReggieAutoFARBLUE_v2 extends OpMode {
     //private static final Logger log = LoggerFactory.getLogger(AyCrush2P_PP.class);
     //Pedro Pathing Variables
     private Follower follower;
@@ -37,7 +38,7 @@ public class ReggieAutoFARBLUE_v3 extends OpMode {
     public int motif;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
-    int longDistanceVelocity = 1400;
+
     int shooterPower;
     int GshooterPower;
     int artifact;
@@ -49,20 +50,15 @@ public class ReggieAutoFARBLUE_v3 extends OpMode {
     public double TARGET_VELOCITY_RIGHT = 1300;
     public double TARGET_MIN_VELOCITY_RIGHT = 1290;
     private Path Start;
-    public boolean lastShot = false;
     public enum ShooterSide{
         LEFT,
         RIGHT
     }
-    public PathChain ReadPos, Score, aimRow1, pickupGreen, pickupPurple, Park,startToLeave, score2leave, purple2score;
-    private final Pose startPose = new Pose(58, 9, Math.toRadians(90)); // Start Pose of our robot.
-    private final Pose readPos = new Pose(58, 46, Math.toRadians(92)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
-    private final Pose scorePose = new Pose(58, 21, Math.toRadians(113)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose aimRow = new Pose(44,44,Math.toRadians(180));
-    private final Pose aimRowControl = new Pose(54,32.6,Math.toRadians(180));
-    private final Pose rowGreen = new Pose(40,50,Math.toRadians(180));
-    private final Pose rowPurple = new Pose(26,50,Math.toRadians(180));
-    private final Pose park = new Pose(58, 27, Math.toRadians(90)); // Highest (First Set) of Artifacts from the Spike Mark.
+    public PathChain ReadPos, Score, Park;
+    private final Pose startPose = new Pose(56, 9, Math.toRadians(90)); // Start Pose of our robot.
+    private final Pose readPos = new Pose(56, 46, Math.toRadians(65)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    private final Pose scorePose = new Pose(58, 21, Math.toRadians(112)); // Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose park = new Pose(34, 14, Math.toRadians(180)); // Highest (First Set) of Artifacts from the Spike Mark.
 
 
 
@@ -81,6 +77,8 @@ public class ReggieAutoFARBLUE_v3 extends OpMode {
         follower.update();
         Miller = new Reggie();
         Miller.init(hardwareMap);
+        shooterPower = 70;
+        GshooterPower = 70;
         artifact = 0;
         pathTimer = new Timer();
         opmodeTimer = new Timer();
@@ -109,33 +107,9 @@ public class ReggieAutoFARBLUE_v3 extends OpMode {
                 .addPath(new BezierLine(readPos, scorePose))
                 .setLinearHeadingInterpolation(readPos.getHeading(),scorePose.getHeading())
                 .build();
-        aimRow1 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose,aimRowControl,aimRow))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), aimRow.getHeading())
-                .build();
-        pickupGreen = follower.pathBuilder()
-                .addPath(new BezierLine(aimRow,rowGreen))
-                .setConstantHeadingInterpolation(aimRow.getHeading())
-                .build();
-        pickupPurple = follower.pathBuilder()
-                .addPath(new BezierLine(rowGreen,rowPurple))
-                .setConstantHeadingInterpolation(rowPurple.getHeading())
-                .build();
         Park = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose,park))
                 .setLinearHeadingInterpolation(readPos.getHeading(), park.getHeading())
-                .build();
-        startToLeave = follower.pathBuilder()
-                .addPath(new BezierLine(startPose,park))
-                .setLinearHeadingInterpolation(startPose.getHeading(), park.getHeading())
-                .build();
-        score2leave = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose,park))
-                .setConstantHeadingInterpolation(park.getHeading())
-                .build();
-        purple2score = follower.pathBuilder()
-                .addPath(new BezierLine(rowPurple,scorePose))
-                .setConstantHeadingInterpolation(scorePose.getHeading())
                 .build();
 
         /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
@@ -144,16 +118,16 @@ public class ReggieAutoFARBLUE_v3 extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.setMaxPower(.9);
-                //follower.followPath(ReadPos,true);
-                //Miller.shootClose();
+                follower.setMaxPower(.7);
+                follower.followPath(ReadPos,true);
                 setPathState(11);
+
+                //Miller.shootClose();
 
                 break;
             case 11:
-                //motif = order(Miller.huskyLens);
-                motif = 2;
-                if(pathTimer.getElapsedTimeSeconds() >= 0.5 && (motif==1 || motif==2 || motif==3)){
+                motif = order(Miller.huskyLens);
+                if(pathTimer.getElapsedTimeSeconds() >= 2 && (motif==1 || motif==2 || motif==3)){
 
                     setPathState(1);
                 }
@@ -167,51 +141,39 @@ public class ReggieAutoFARBLUE_v3 extends OpMode {
                     /* Score Preload */
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(Score,true);
-                    //Miller.setStoppers(false,false);
+                    Miller.setShooterPower(70);
+                    Miller.setStoppers(false,false);
                     setPathState(2);
                 }
                 break;
             case 2:
-                if(!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >=1 ){
+                if(!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >=3 ){
                     if ( motif == 1) {
-                        Miller.TARGET_MIN_VELOCITY_RIGHT = 1150;
-                        Miller.TARGET_VELOCITY_RIGHT = 1100;
-                        Miller.TARGET_MIN_VELOCITY_LEFT = 1100;
-                        Miller.TARGET_VELOCITY_LEFT = 1150;
-                        setShooterSide(ShooterSide.LEFT);
-                        setPathState(300);
+                        setPathState(3);
                     }else if ( motif == 2) {
-                        Miller.TARGET_MIN_VELOCITY_RIGHT = 1360;
-                        Miller.TARGET_VELOCITY_RIGHT = 1440;
-                        Miller.TARGET_MIN_VELOCITY_LEFT = 1300;
-                        Miller.TARGET_VELOCITY_LEFT = 1450;
-                        setShooterSide(ShooterSide.RIGHT);
                         setPathState(4);
                     }else if ( motif == 3) {
-                        Miller.TARGET_MIN_VELOCITY_RIGHT = 1350;
-                        Miller.TARGET_VELOCITY_RIGHT = 1400;
-                        Miller.TARGET_MIN_VELOCITY_LEFT = 1300;
-                        Miller.TARGET_VELOCITY_LEFT = 1350;
-                        setShooterSide(ShooterSide.LEFT);
-                        setPathState(500);
+                        setPathState(5);
                     }
                 }
                 if (pathTimer.getElapsedTimeSeconds() >= 15) {
                     break;
                 }
                 break;
-            case 300:
+            case 3:
                 //PPG
+                Miller.indexerPower(0,Miller.leftIndexerServo);
+                setShooterSide(ShooterSide.LEFT);
                 Miller.indexerPower(25, Miller.leftIndexerServo);
                 Miller.setIntakePower(65);
                 Miller.setSorterServoPosition(sortPositionLeft);
                 setShooterSide(ShooterSide.RIGHT);
-                if(targetVelocityAcquired(ShooterSide.RIGHT )&& (pathTimer.getElapsedTimeSeconds() >= 2)){
-                    Miller.setSorterServoPosition(sortPositionRight);
-                    setPathState(-301);
+                if(targetVelocityAcquired(ShooterSide.RIGHT )&& (pathTimer.getElapsedTimeSeconds() >= 4)){
+                    setPathState(31);
                 }
                 break;
-            case 301:
+            case 31:
+                Miller.setSorterServoPosition(sortPositionRight);
                 Miller.indexerPower(80, Miller.rightIndexerServo);
                 if (pathTimer.getElapsedTimeSeconds() >= 2 && artifact == 0){
                     setPathState(32);
@@ -224,83 +186,28 @@ public class ReggieAutoFARBLUE_v3 extends OpMode {
                 break;
             case 4:
                 //GPP
-                if(!follower.isBusy() && targetVelocityAcquired(ShooterSide.LEFT) && pathTimer.getElapsedTimeSeconds() >= 0.8){
-                    Miller.setStoppers(true,true);
-                    Miller.indexerPower(0,Miller.leftIndexerServo);
-                    Miller.indexerPower(80, Miller.rightIndexerServo);
-                    Miller.setSorterServoPosition(sortPositionRight);
-                    if(targetVelocityAcquired(ShooterSide.LEFT) && pathTimer.getElapsedTimeSeconds() >= 1){
-                        Miller.setStoppers(false,true);
+                Miller.indexerPower(0,Miller.leftIndexerServo);
+                setShooterSide(ShooterSide.RIGHT);
+                Miller.indexerPower(80, Miller.rightIndexerServo);
+                Miller.indexerPower(0, Miller.leftIndexerServo);
+                Miller.setSorterServoPosition(sortPositionRight);
+                setShooterSide(ShooterSide.LEFT);
+                if(targetVelocityAcquired(ShooterSide.LEFT)){
                     setPathState(41);
-
-                        Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
-                    }
+                    Miller.setShooterPower(65);
                 }
                 break;
             case 41:
-                if (targetVelocityAcquired(ShooterSide.RIGHT) && pathTimer.getElapsedTimeSeconds() > 1){
-                    Miller.setIntakePower(58);
-                    Miller.setSorterServoPosition(sortPositionLeft);
-                    Miller.indexerPower(30, Miller.leftIndexerServo);
-                    if(pathTimer.getElapsedTimeSeconds() >= 3){
-                        Miller.setStoppers(false,false);
-                        setPathState(42);
-                    }
+                Miller.setIntakePower(58);
+                Miller.setSorterServoPosition(sortPositionLeft);
+                Miller.indexerPower(30, Miller.leftIndexerServo);
+                if(pathTimer.getElapsedTimeSeconds() >= 5){
+                    setPathState(42);
                 }
                 break;
             case 42:
                 if (pathTimer.getElapsedTimeSeconds() >= 2){
-                    Miller.indexerPower(0,Miller.leftIndexerServo);
-                    Miller.indexerPower(0,Miller.rightIndexerServo);
-                    Miller.setStoppers(true,true);
-                    if (!lastShot){
-                        setPathState(43);
-                }else{
-                    setPathState(47);
-                }
-        }
-                break;
-            case 43 :
-                if (!follower.isBusy()){
-                    follower.followPath(aimRow1,.45,true);
-                    Miller.setSorterServoPosition(sortPositionLeft);
-                    setPathState(44);
-                }
-                break;
-            case 44:
-                if (!follower.isBusy()){
-                    Miller.setIntakePower(50);
-                    follower.followPath(pickupGreen,.45,true);
-                    setPathState(45);
-                }
-                break;
-            case 45:
-                if (!follower.isBusy()){
-                    Miller.setSorterServoPosition(sortPositionRight);
-                    follower.followPath(pickupPurple,.25,true);
-                    Miller.indexerPower(0, Miller.leftIndexerServo);
-                    Miller.indexerPower(0, Miller.rightIndexerServo);
-                    setPathState(46);
-                }
-                break;
-            case 46:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>1){
-                    follower.followPath(purple2score,.9,true);
-                    lastShot = true;
-                    setPathState(4);
-                }
-                break;
-            case 47:
-                if (!follower.isBusy()){
-                    follower.followPath(score2leave);
-                    setPathState(48);
-                }
-                break;
-            case 48:
-                if(!follower.isBusy()){
-                    DataStorage.currentPose = follower.getPose();
-                    DataStorage.Blue = true;
-                    requestOpModeStop();
+                    setPathState(32);
                 }
                 break;
             case 5:
@@ -331,17 +238,6 @@ public class ReggieAutoFARBLUE_v3 extends OpMode {
                 Miller.indexerPower(80, Miller.leftIndexerServo);
                 if (pathTimer.getElapsedTimeSeconds() >= 2) {
                     setPathState(32);
-                }
-                break;
-            case 900:
-                if(!follower.isBusy()){
-                    follower.followPath(startToLeave);
-                    setPathState(901);
-                }
-                break;
-            case 901:
-                if(!follower.isBusy()){
-                    requestOpModeStop();
                 }
                 break;
         }

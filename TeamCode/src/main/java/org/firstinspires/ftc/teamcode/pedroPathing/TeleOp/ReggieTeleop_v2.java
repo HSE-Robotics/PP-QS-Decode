@@ -298,7 +298,6 @@ public boolean shooting;
 
 
         }
-        /*
         if (gamepad1.squareWasPressed()) {
             if(currentState == 0){
                 follower.followPath(ToShoot);
@@ -343,11 +342,9 @@ public boolean shooting;
             Miller.TARGET_VELOCITY_LEFT = (Math.sqrt(range) * velocityMultiplier);
             Miller.setShooterVelocity(Reggie.SIDES.LEFT);
                 shooting = true;
-            }
+            }*/
 
 //            Miller.setShooterVelocity(closeDistanceVelocity);
-
-
         } else if (gamepad1.cross) {
             Miller.setShooterPower(0);
             //shooting = false;
