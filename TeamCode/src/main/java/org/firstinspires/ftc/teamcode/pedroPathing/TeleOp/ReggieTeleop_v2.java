@@ -280,20 +280,26 @@ public boolean shooting;
             //Indexers Code
             if (gamepad1.right_bumper) {
                 Miller.indexerPower(80, Miller.rightIndexerServo);
-                Miller.indexerPower(0, Miller.leftIndexerServo);
-                Miller.setSorterServoPosition(Miller.sortPositionRight);
-                Miller.setStoppers(false,true);
-                Miller.setIntakePower(0.4);
-            } else if (gamepad1.left_bumper) {
+                Miller.indexerPower(90, Miller.leftIndexerServo);
+                //Miller.setSorterServoPosition(Miller.sortPositionRight);
+                Miller.setStoppers(false,false);
+                Miller.setIntakePower(0.6);
+            } else if (gamepad1.dpad_left) {
                 Miller.indexerPower(80, Miller.leftIndexerServo);
                 Miller.indexerPower(0, Miller.rightIndexerServo);
-                Miller.setSorterServoPosition(Miller.sortPositionLeft);
+                //Miller.setSorterServoPosition(Miller.sortPositionLeft);
+                Miller.setStoppers(false,false);
+                Miller.setIntakePower(0.6);
+            } else if (gamepad1.dpad_right) {
+                Miller.indexerPower(0, Miller.leftIndexerServo);
+                Miller.indexerPower(80, Miller.rightIndexerServo);
+                //Miller.setSorterServoPosition(Miller.sortPositionLeft);
                 Miller.setStoppers(true,false);
-                Miller.setIntakePower(0.4);
+                Miller.setIntakePower(0.6);
             } else {
                 Miller.indexerPower(0, Miller.leftIndexerServo);
                 Miller.indexerPower(0, Miller.rightIndexerServo);
-                Miller.setSorterServoPosition(sortPositionMiddle);
+                //Miller.setSorterServoPosition(sortPositionMiddle);
             }
 
 

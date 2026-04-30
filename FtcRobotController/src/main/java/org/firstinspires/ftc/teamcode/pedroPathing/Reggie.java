@@ -50,8 +50,8 @@ public class Reggie {
         PASS
     }
     StoppersStates stoppersStates = StoppersStates.STOP;
-    public double TARGET_VELOCITY_LEFT = 1400;
-    public double TARGET_MIN_VELOCITY_LEFT = 1200;
+    public double TARGET_VELOCITY_LEFT = 1100;
+    public double TARGET_MIN_VELOCITY_LEFT = 900;
     public double TARGET_VELOCITY_RIGHT = 1300;
     public double TARGET_MIN_VELOCITY_RIGHT = 1200;
 

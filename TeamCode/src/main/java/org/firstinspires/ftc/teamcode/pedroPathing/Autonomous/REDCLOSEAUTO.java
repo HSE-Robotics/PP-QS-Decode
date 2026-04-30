@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Autonomous;
 
-//import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -21,9 +21,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Reggie;
  * @author Gerry DLIII - 18908 Mighty Hawks
  * @version 1.3, 12/11/2025
  */
-
-@Autonomous(name = "RED_Close_Regionals_Optimized", group = "Regionals Reggie")
-public class ReggieRedCloseAuto_v4 extends OpMode {
+@Configurable
+@Autonomous(name = "RedCloseAutoWorlds", group = "Worlds Reggie")
+public class REDCLOSEAUTO extends OpMode {
     //private static final Logger log = LoggerFactory.getLogger(AyCrush2P_PP.class);
     //Pedro Pathing Variables
     private Follower follower;
@@ -39,6 +39,7 @@ public class ReggieRedCloseAuto_v4 extends OpMode {
     double sortPositionLeft = 0.75;
     double sortPositionMidLeft = 0.75;
     double sortPositionMidRight = 0.25;
+
 
     private enum Rows{
         TOP_ROW,
@@ -56,8 +57,7 @@ public class ReggieRedCloseAuto_v4 extends OpMode {
     public static double yTopRowPurple = 78;
     public static double yTopRowGreen = 87;
 
-    public static double yMidRowPurple = 55;
-    public static double yMidRowGreen = 60;
+    public static double yMidRow = 75;
     public static double yBotRowPurple = 26;
     public static double yBotRowGreen = 34;
 
@@ -70,37 +70,43 @@ public class ReggieRedCloseAuto_v4 extends OpMode {
      *
      */
     private Path Start;
-    private PathChain ReadPath, ScorePath, aimingFirstBallTopRowPath, pickFirstBallTopRowPath, pickSecondBallTopRowPath,
-                      pickThirdBallTopRowPath, grabPickup2,forward, scoreFromTopRowPath, scoreFromMiddleRowPath,
-                        aimingFirstBallMiddleRowPath, pickFirstBallMiddleRowPath, pickSecondBallMiddleRowPath,
-                        pickThirdBallMiddleRowPath, leavePath, pickThirdBallMiddleRowPathPPG, scoreFromMiddleRowPathPPG, pickSecondBallMiddleRowPathPPG;
-    private final Pose startPose = new Pose(128, 113, Math.toRadians(90)); // Start Pose of our robot.
-    private final Pose readPose = new Pose(93, 95, Math.toRadians(90)); // Reading Obelisk Pose of our robot. It is facing the obelisk at 127 degree angle.
-    private final Pose scorePose = new Pose(88, 92, Math.toRadians(34)); // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
-    //    //private final Pose scorePoseSecond = new Pose(92, 93, Math.toRadians(40)); //  Working Pose
-    private final Pose scorePoseSecond = new Pose(90, 90, Math.toRadians(45));
-    private final Pose scorePoseSecondControl = new Pose(92, 80, Math.toRadians(23)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose scorePoseThirdControl = new Pose(90, 50, Math.toRadians(23)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose scorePoseThird = new Pose(95, 92, Math.toRadians(45)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose aimingFirstBallTopRowPose = new Pose(90, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickFirstBallTopRowPose = new Pose(96, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickSecondBallTopRowPose = new Pose(97, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallTopRowPose = new Pose(108, yTopRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallTopRowControlPose = new Pose(90, yTopRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose aimingFirstBallMiddleRowPose = new Pose(88, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickFirstBallMiddleRowPose = new Pose(92, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickSecondBallMiddleRowPose = new Pose(98, yMidRowGreen, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickSecondBallMiddleRowControlPose = new Pose(90, yMidRowPurple, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallMiddleRowPose = new Pose(109, yMidRowPurple-4, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallMiddleRowControlPose = new Pose(90, yMidRowGreen-4, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private PathChain StarttoShoot, ScorePath, aimingFirstBallTopRowPath, pickFirstBallTopRowPath, pickSecondBallTopRowPath,
+            ShoottoMiddleRowStart, MiddleRowStarttoMiddleRowEnd,MiddleRowEndtoShoot2, MiddleRowEnd1toMiddleRowStart2,
+            MiddleRowStart2toMiddleRowEnd2,OpenGateForward1toShoot3,TopRowEndtoShoot4, Shoot2toOpenGate1, MiddleRowStart1toMiddleRowEnd1,ShoottoMiddleRowStart1,MiddleRowEnd2toShoot2, OpenGate1toOpenGateForward1,
+            pickThirdBallTopRowPath,MiddleRowEnd1toShoot2,TopRowStarttoTopRowEnd, grabPickup2,forward, scoreFromTopRowPath, scoreFromMiddleRowPath, Shoot3toTopRowStart,
+            aimingFirstBallMiddleRowPath, pickFirstBallMiddleRowPath, pickSecondBallMiddleRowPath,
+            pickThirdBallMiddleRowPath, leavePath, pickThirdBallMiddleRowPathPPG, scoreFromMiddleRowPathPPG, pickSecondBallMiddleRowPathPPG, Shoot2;
+    private final Pose startPose = new Pose(100, 136, Math.toRadians(90)); // Start Pose of our robot.
+    private final Pose shootPose = new Pose(84.5, 105.5, Math.toRadians(52));
+    private final Pose shootPosecontrolpoint = new Pose(80, 80.5, Math.toRadians(50));
+    private final Pose shootPose3controlpoint = new Pose(35, 82.5, Math.toRadians(50));
 
-    //PPG Mid Row Paths
-    private final Pose pickSecondBallMiddleRowPosePPG = new Pose(98, yMidRowPurple-4, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickSecondBallMiddleRowControlPosePPG = new Pose(94, yMidRowPurple-4, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallMiddleRowPosePPG = new Pose(110, yMidRowPurple-4, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
-    private final Pose pickThirdBallMiddleRowControlPosePPG = new Pose(100, yMidRowPurple-4, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
+    private final Pose shootPose2 = new Pose(84, 105, Math.toRadians(40)); // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
+    private final Pose shootPose3 = new Pose(83, 113, Math.toRadians(47.5));
+    private final Pose shootPose4 = new Pose(76, 120, Math.toRadians(38)); // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
+    private final Pose middleRowStart1 = new Pose(79, yMidRow-9, Math.toRadians(0));
+    private final Pose middleRowEnd1=new Pose(95,yMidRow-9, Math.toRadians(0));
+    private final Pose middleRowStart2=new Pose(93 ,yMidRow-2.5, Math.toRadians(0));
+    private final Pose middleRowEnd2=new Pose(115,yMidRow-2.5, Math.toRadians(0));
+    private final Pose middleRowEnd2controlpoint =new Pose(60,yMidRow-6.5, Math.toRadians(0));
 
-//    private final Pose pickThirdBallMiddleRowPosePPG = new Pose(115, yMidRowPurple-7, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+    private final Pose opengate1=new Pose(99,61, Math.toRadians(22.5));
+    private final Pose opengateforward1=new Pose(108,61.75, Math.toRadians(30));
+
+    private final Pose opengate1curve =new Pose(50,75);
+    private final Pose topRowStart =new Pose(86,89, Math.toRadians(0) );
+    private final Pose topRowEnd =new Pose(114,89, Math.toRadians(0));
+    private final Pose toprowendcurve =new Pose(70,96, Math.toRadians(0));
+
+
+
+    private int gate = 0;
+
+
+    // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
+
+    //    private final Pose pickThirdBallMiddleRowPosePPG = new Pose(115, yMidRowPurple-7, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at 47 degree angle.
     private final Pose leavePose = new Pose(100, 75, Math.toRadians(45)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose pickup1Pose = new Pose(82, 80, Math.toRadians(50)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose pickup1 = new Pose(90, 74, Math.toRadians(360)); // Highest (First Set) of Artifacts from the Spike Mark.
@@ -138,183 +144,250 @@ public class ReggieRedCloseAuto_v4 extends OpMode {
         // playTime.reset();
     }
 
-    public void buildPathsPPG() {
-
-        ///* Drive to Score from the Third ball from Middle row PPG */
-        scoreFromMiddleRowPathPPG = follower.pathBuilder()
-                .addPath(new BezierCurve(pickThirdBallMiddleRowPosePPG, scorePoseThirdControl, scorePoseThird))
-                .setLinearHeadingInterpolation(pickThirdBallMiddleRowPosePPG.getHeading(),scorePoseThird.getHeading())
-                .build();
-
-        ///* Drive to pick the Second ball from Middle row PPG */
-         pickSecondBallMiddleRowPathPPG = follower.pathBuilder()
-                .addPath(new BezierCurve(pickFirstBallMiddleRowPose, pickSecondBallMiddleRowControlPosePPG, pickSecondBallMiddleRowPosePPG))
-                .setLinearHeadingInterpolation(pickFirstBallMiddleRowPose.getHeading(), pickSecondBallMiddleRowPosePPG.getHeading())
-                .build();
-
-        /* Drive to pick the Third ball from top row */
-        pickThirdBallMiddleRowPathPPG = follower.pathBuilder()
-                .addPath(new BezierCurve(pickSecondBallMiddleRowPosePPG,pickThirdBallMiddleRowControlPosePPG, pickThirdBallMiddleRowPosePPG))
-                .setLinearHeadingInterpolation(pickSecondBallMiddleRowPosePPG.getHeading(),pickThirdBallMiddleRowPosePPG.getHeading())
-                .build();
-}
+    //    public void buildPathsPPG() {
+//
+//        ///* Drive to Score from the Third ball from Middle row PPG */
+//        scoreFromMiddleRowPathPPG = follower.pathBuilder()
+//                .addPath(new BezierCurve(pickThirdBallMiddleRowPosePPG, scorePoseThirdControl, scorePoseThird))
+//                .setLinearHeadingInterpolation(pickThirdBallMiddleRowPosePPG.getHeading(),scorePoseThird.getHeading())
+//                .build();
+//
+//        ///* Drive to pick the Second ball from Middle row PPG */
+//        pickSecondBallMiddleRowPathPPG = follower.pathBuilder()
+//                .addPath(new BezierCurve(pickFirstBallMiddleRowPose, pickSecondBallMiddleRowControlPosePPG, pickSecondBallMiddleRowPosePPG))
+//                .setLinearHeadingInterpolation(pickFirstBallMiddleRowPose.getHeading(), pickSecondBallMiddleRowPosePPG.getHeading())
+//                .build();
+//
+//        /* Drive to pick the Third ball from top row */
+//        pickThirdBallMiddleRowPathPPG = follower.pathBuilder()
+//                .addPath(new BezierCurve(pickSecondBallMiddleRowPosePPG,pickThirdBallMiddleRowControlPosePPG, pickThirdBallMiddleRowPosePPG))
+//                .setLinearHeadingInterpolation(pickSecondBallMiddleRowPosePPG.getHeading(),pickThirdBallMiddleRowPosePPG.getHeading())
+//                .build();
+//    }
     public void buildPaths() {
         ///* Drive to read the obelisk */
-        ReadPath = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, readPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(),readPose.getHeading())
+        StarttoShoot = follower.pathBuilder()
+                .addPath(new BezierLine(startPose, shootPose))
+                .setLinearHeadingInterpolation(startPose.getHeading(),shootPose.getHeading())
                 .build();
 
         ///* Turn to score position */
-        ScorePath = follower.pathBuilder()
-                .addPath(new BezierLine(readPose, scorePose))
-                .setLinearHeadingInterpolation(readPose.getHeading(),scorePose.getHeading())
+        ShoottoMiddleRowStart1 = follower.pathBuilder()
+                .addPath(new BezierCurve(shootPose,shootPosecontrolpoint, middleRowStart1))
+                .setLinearHeadingInterpolation(shootPose.getHeading(),middleRowStart1.getHeading())
                 .build();
+
+        MiddleRowStart1toMiddleRowEnd1 = follower.pathBuilder()
+                .addPath(new BezierLine(middleRowStart1, middleRowEnd1))
+                .setLinearHeadingInterpolation(middleRowStart1.getHeading(),middleRowEnd1.getHeading())
+                .build();
+        OpenGate1toOpenGateForward1 = follower.pathBuilder()
+                .addPath(new BezierLine(opengate1,opengateforward1))
+                .setLinearHeadingInterpolation(opengate1.getHeading(),opengateforward1.getHeading())
+                .build();
+
+        MiddleRowEnd1toMiddleRowStart2 = follower.pathBuilder()
+                .addPath(new BezierLine(middleRowEnd1, middleRowStart2))
+                .setLinearHeadingInterpolation(middleRowEnd1.getHeading(),middleRowStart2.getHeading())
+                .build();
+
+        MiddleRowStart2toMiddleRowEnd2 = follower.pathBuilder()
+                .addPath(new BezierLine(middleRowStart2, middleRowEnd2))
+                .setLinearHeadingInterpolation(middleRowStart2.getHeading(),middleRowEnd2.getHeading())
+                .build();
+
+        MiddleRowEnd2toShoot2 = follower.pathBuilder()
+                .addPath(new BezierCurve(middleRowEnd2,middleRowEnd2controlpoint, shootPose2))
+                .setLinearHeadingInterpolation(middleRowEnd2.getHeading(),shootPose2.getHeading())
+                .build();
+        Shoot2toOpenGate1 = follower.pathBuilder()
+                .addPath(new BezierCurve(shootPose2,opengate1curve,opengate1))
+                .setLinearHeadingInterpolation(shootPose2.getHeading(),opengate1.getHeading())
+                .build();
+
+        OpenGate1toOpenGateForward1 = follower.pathBuilder()
+                .addPath(new BezierLine(opengate1,opengateforward1))
+                .setLinearHeadingInterpolation(opengate1.getHeading(),opengateforward1.getHeading())
+                .build();
+        MiddleRowEnd1toShoot2 = follower.pathBuilder()
+                .addPath(new BezierCurve(middleRowEnd1,middleRowEnd2controlpoint, shootPose2))
+                .setLinearHeadingInterpolation(middleRowEnd1.getHeading(),shootPose2.getHeading())
+                .build();
+        OpenGateForward1toShoot3 = follower.pathBuilder()
+                .addPath(new BezierCurve(opengateforward1,shootPose3controlpoint, shootPose3))
+                .setLinearHeadingInterpolation(opengateforward1.getHeading(),shootPose3.getHeading())
+                .build();
+        Shoot3toTopRowStart = follower.pathBuilder()
+                .addPath(new BezierLine(shootPose3,topRowStart))
+                .setLinearHeadingInterpolation(shootPose3.getHeading(),topRowStart.getHeading())
+                .build();
+        TopRowStarttoTopRowEnd = follower.pathBuilder()
+                .addPath(new BezierLine(topRowStart,topRowEnd))
+                .setLinearHeadingInterpolation(topRowStart.getHeading(),topRowEnd.getHeading())
+                .build();
+        TopRowEndtoShoot4 = follower.pathBuilder()
+                .addPath(new BezierCurve(topRowEnd,toprowendcurve,shootPose4))
+                .setLinearHeadingInterpolation(topRowEnd.getHeading(),shootPose4.getHeading())
+                .build();
+
+
 
         ///* Aim to get the first ball from the top row */
-        aimingFirstBallTopRowPath = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose,new Pose(88, 83.000), aimingFirstBallTopRowPose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(),aimingFirstBallTopRowPose.getHeading())
-                .build();
-
-        ///* Drive to pick the first ball then stop to sort */
-        pickFirstBallTopRowPath = follower.pathBuilder()
-                .addPath(new BezierLine(aimingFirstBallTopRowPose, pickFirstBallTopRowPose))
-                .setLinearHeadingInterpolation(aimingFirstBallTopRowPose.getHeading(),pickFirstBallTopRowPose.getHeading())
-                .build();
-
-        ///* Drive to pick the Second ball from top row */
-        pickSecondBallTopRowPath = follower.pathBuilder()
-                .addPath(new BezierLine(pickFirstBallTopRowPose, pickSecondBallTopRowPose))
-                .setLinearHeadingInterpolation(pickFirstBallTopRowPose.getHeading(),pickSecondBallTopRowPose.getHeading())
-                .build();
-
-        ///* Drive to pick the Third ball from top row */
-        pickThirdBallTopRowPath = follower.pathBuilder()
-                .addPath(new BezierCurve(pickSecondBallTopRowPose, pickThirdBallTopRowControlPose, pickThirdBallTopRowPose))
-                .setLinearHeadingInterpolation(pickSecondBallTopRowPose.getHeading(),pickThirdBallTopRowPose.getHeading())
-                .build();
-
-        ///* Drive to Score from the Third ball from top row */
-        scoreFromTopRowPath = follower.pathBuilder()
-                .addPath(new BezierCurve(pickThirdBallTopRowPose, scorePoseSecondControl ,scorePoseSecond))
-                .setLinearHeadingInterpolation(pickThirdBallTopRowPose.getHeading(),scorePoseSecond.getHeading())
-                .build();
-
-        ///* Drive to Score from the Third ball from Middle row */
-        scoreFromMiddleRowPath = follower.pathBuilder()
-                .addPath(new BezierCurve(pickThirdBallMiddleRowPose, scorePoseThirdControl, scorePoseThird))
-                .setLinearHeadingInterpolation(pickThirdBallMiddleRowPose.getHeading(),scorePoseThird.getHeading())
-                .build();
-
-        ///* Aim to get the first ball from the top row */
-        aimingFirstBallMiddleRowPath = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePoseSecond,new Pose(98.0, 70.0), aimingFirstBallMiddleRowPose))
-                .setLinearHeadingInterpolation(scorePoseSecond.getHeading(),aimingFirstBallMiddleRowPose.getHeading())
-                .build();
-
-        ///* Drive to pick the first ball then stop to sort */
-        pickFirstBallMiddleRowPath = follower.pathBuilder()
-                .addPath(new BezierLine(aimingFirstBallMiddleRowPose, pickFirstBallMiddleRowPose))
-                .setLinearHeadingInterpolation(aimingFirstBallMiddleRowPose.getHeading(),pickFirstBallMiddleRowPose.getHeading())
-                .build();
-
-        ///* Drive to pick the Second ball from top row */
-        pickSecondBallMiddleRowPath = follower.pathBuilder()
-                .addPath(new BezierCurve(pickFirstBallMiddleRowPose,pickSecondBallMiddleRowControlPose, pickSecondBallMiddleRowPose))
-                .setLinearHeadingInterpolation(pickFirstBallMiddleRowPose.getHeading(),pickSecondBallMiddleRowPose.getHeading())
-                .build();
-
-        ///* Drive to pick the Third ball from top row */
-        pickThirdBallMiddleRowPath = follower.pathBuilder()
-                .addPath(new BezierCurve(pickSecondBallMiddleRowPose, pickThirdBallMiddleRowControlPose, pickThirdBallMiddleRowPose))
-                .setLinearHeadingInterpolation(pickSecondBallMiddleRowPose.getHeading(),pickThirdBallMiddleRowPose.getHeading())
-                .build();
-
-        leavePath = follower.pathBuilder()
-                .addPath(new BezierLine(scorePoseThird,leavePose))
-                .setLinearHeadingInterpolation(scorePoseThird.getHeading(), leavePose.getHeading())
-                .build();
-
-        grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup1Pose,pickup1))
-                .setLinearHeadingInterpolation(pickup1Pose.getHeading(), pickup1.getHeading())
-                .build();
-
-        forward = follower.pathBuilder()
-                .addPath(new BezierLine(pickup1,pickup2))
-                .setConstantHeadingInterpolation(pickup1.getHeading())
-                .build();
-        /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+//
+//        /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
     }
 
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(ReadPath,0.9, true);
-                setPathState(11);
-                Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
+                //This is following the path to begin shooting, while also having our flywheels on
+                follower.followPath(StarttoShoot, 0.9, true);
+                setPathState(1);
+                Miller.setShooterVelocity(Reggie.SIDES.LEFT);
 
                 //Miller.shootClose();
 
                 break;
-            case 11:
-                motif = 3;
-//                motif = order(Miller.huskyLens);
-                if(!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 0.75 && (motif==1 || motif==2 || motif==3)){
-                    setPathState(1);
-                }
-                if(pathTimer.getElapsedTimeSeconds() >= 4){
-                    Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
-                    follower.followPath(ScorePath,0.85,true);
-                    setPathState(100);
-                }
-                break;
+
             case 1:
-                follower.setMaxPower(.85);
 
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if(!follower.isBusy()) {
+                if (!follower.isBusy()) {
                     /* Score Preload */
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(ScorePath,0.85, true);
-//                    Miller.setShooterPower(100);
+                    //our indexers turn on
+                    Miller.setStoppers(false, false);
+                    Miller.setIntakePower(20);
+                    Miller.indexerPower(60, Miller.rightIndexerServo);
+                    Miller.indexerPower(60, Miller.leftIndexerServo);
                     //Miller.setShooterVelocity(Miller.TARGET_VELOCITY);
+                    Miller.setStoppers(false, false);
                     setPathState(2);
+
                 }
                 break;
             case 2:
-                if(!follower.isBusy() || pathTimer.getElapsedTimeSeconds() >=1.25 ){
-                    if ( motif == 1) { //PPG
-                       // buildPathsPPG();
-                        Miller.TARGET_MIN_VELOCITY_RIGHT = 1000;
-                        Miller.TARGET_VELOCITY_RIGHT = 1100;
-                        Miller.TARGET_VELOCITY_LEFT = 1050;
-                        Miller.TARGET_MIN_VELOCITY_LEFT = 950;
-                        Miller.setShooterVelocity(Reggie.SIDES.LEFT);
-                        setPathState(100);
-                    }else if ( motif == 2) {//GPP
-                        Miller.TARGET_MIN_VELOCITY_RIGHT = 1000;
-                        Miller.TARGET_VELOCITY_RIGHT = 1100;
-                        Miller.TARGET_VELOCITY_LEFT = 1050;
-                        Miller.TARGET_MIN_VELOCITY_LEFT = 950;
-                        Miller.setShooterVelocity(Reggie.SIDES.RIGHT);
-                        setPathState(200);
-                    }else if ( motif == 3) {//PGP
-                        Miller.TARGET_MIN_VELOCITY_RIGHT = 1000;
-                        Miller.TARGET_VELOCITY_RIGHT = 1100;
-                        Miller.TARGET_VELOCITY_LEFT = 1000;
-                        Miller.TARGET_MIN_VELOCITY_LEFT = 900;
-                        Miller.setShooterVelocity(Reggie.SIDES.LEFT);
-                        setPathState(300);
-                    }else{
-                        setPathState(100);
-                    }
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.85) {
+                    follower.followPath(ShoottoMiddleRowStart1, true);
+                    Miller.indexerPower(0, Miller.rightIndexerServo);
+                    Miller.indexerPower(0, Miller.leftIndexerServo);
+                    Miller.setStoppers(true, true);
+                    setPathState(3);
                 }
-                if (pathTimer.getElapsedTimeSeconds() >= 15) {
-                    break;
+
+                break;
+            case 3:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.0) {
+                    follower.followPath(MiddleRowStart1toMiddleRowEnd1, 0.35, true);
+                    setPathState(6);
+
                 }
                 break;
+
+
+            case 6:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.75) {
+                    follower.followPath(MiddleRowEnd1toShoot2, 0.9, true);
+                    setPathState(7);
+
+
+                }
+                break;
+            case 7:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.75) {
+                    Miller.indexerPower(60, Miller.rightIndexerServo);
+                    Miller.indexerPower(60, Miller.leftIndexerServo);
+                    Miller.setStoppers(false, false);
+
+                    setPathState(8);
+                }
+                break;
+            case 8:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 2.0 && gate < 1) {
+                    follower.followPath(Shoot2toOpenGate1);
+                    Miller.indexerPower(0, Miller.rightIndexerServo);
+                    Miller.indexerPower(0, Miller.leftIndexerServo);
+                    Miller.setStoppers(true, true);
+                    gate = gate + 1;
+
+
+                    setPathState(9);
+                }
+
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.25 && gate == 1) {
+                    setPathState(12);
+
+                }
+                break;
+            case 9:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.25 || pathTimer.getElapsedTimeSeconds() >= 5) {
+                    follower.followPath(OpenGate1toOpenGateForward1, 0.4, true);
+                    setPathState(10);
+                }
+                break;
+
+            case 10:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 2.75) {
+                    follower.followPath(OpenGateForward1toShoot3, 0.9, true);
+                    setPathState(11);
+
+                }
+                break;
+
+            case 11:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.0) {
+                    Miller.indexerPower(60, Miller.rightIndexerServo);
+                    Miller.indexerPower(60, Miller.leftIndexerServo);
+                    Miller.setStoppers(false, false);
+                    setPathState(8);
+
+
+                }
+                break;
+            case 12:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.0) {
+                    follower.followPath(Shoot3toTopRowStart, true);
+                    setPathState(13);
+                    Miller.setStoppers(true, true);
+
+
+                }
+                break;
+
+            case 13:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.0) {
+                    follower.followPath(TopRowStarttoTopRowEnd, 0.5, true);
+                    setPathState(14);
+
+                }
+                break;
+
+            case 14:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.0) {
+                    requestOpModeStop();
+
+                }
+                break;
+
+            case 15:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.0) {
+                    Miller.indexerPower(60, Miller.rightIndexerServo);
+                    Miller.indexerPower(60, Miller.leftIndexerServo);
+                    Miller.setStoppers(false, false);
+                    setPathState(16);
+
+
+                }
+                break;
+
+            case 16:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.0) {
+                    requestOpModeStop();
+
+
+                }
+                break;
+
+
             case 100:
                 //PPG
                 if(!follower.isBusy() && Miller.targetVelocityAcquired(Reggie.SIDES.LEFT)){
@@ -358,26 +431,26 @@ public class ReggieRedCloseAuto_v4 extends OpMode {
             case 103:
                 if (pathTimer.getElapsedTimeSeconds() >= 1.25){
 
-                        switch (currentRow){
-                            case TOP_ROW:
-                                follower.followPath(aimingFirstBallTopRowPath, 0.85,true);
-                                Miller.setSorterServoPosition(sortPositionMiddle);
-                                Miller.setIntakePower(75);
-                                Miller.setStoppers(true, true);
-                                setPathState(104);
-                                break;
-                            case MIDDLE_ROW:
-                                follower.followPath(aimingFirstBallMiddleRowPath, 0.85,true);
-                                Miller.setSorterServoPosition(sortPositionMiddle);
-                                Miller.setIntakePower(75);
-                                Miller.setStoppers(true, true);
+                    switch (currentRow){
+                        case TOP_ROW:
+                            follower.followPath(aimingFirstBallTopRowPath, 0.85,true);
+                            Miller.setSorterServoPosition(sortPositionMiddle);
+                            Miller.setIntakePower(75);
+                            Miller.setStoppers(true, true);
+                            setPathState(104);
+                            break;
+                        case MIDDLE_ROW:
+                            follower.followPath(aimingFirstBallMiddleRowPath, 0.85,true);
+                            Miller.setSorterServoPosition(sortPositionMiddle);
+                            Miller.setIntakePower(75);
+                            Miller.setStoppers(true, true);
 
-                                setPathState(111);
-                                break;
-                            case BOTTOM_ROW:
-                                setPathState(120);
-                                break;
-                        }
+                            setPathState(111);
+                            break;
+                        case BOTTOM_ROW:
+                            setPathState(120);
+                            break;
+                    }
 
 
 
@@ -484,7 +557,7 @@ public class ReggieRedCloseAuto_v4 extends OpMode {
                     //Miller.stopEverything();
                     Miller.indexerPower(0, Miller.leftIndexerServo);
                     Miller.indexerPower(0, Miller.rightIndexerServo);
-                   // follower.followPath(aimingFirstBallMiddleRowPath, 0.8,true);
+                    // follower.followPath(aimingFirstBallMiddleRowPath, 0.8,true);
                     Miller.setSorterServoPosition(sortPositionMiddle);
                     Miller.setIntakePower(75);
                     Miller.setStoppers(true, true);
@@ -520,7 +593,7 @@ public class ReggieRedCloseAuto_v4 extends OpMode {
                 if (!follower.isBusy()){
                     follower.followPath(pickSecondBallMiddleRowPath, 0.4,true);
 //                    follower.followPath(pickSecondBallMiddleRowPathPPG, 0.4,true);
-                   // Miller.setSorterServoPosition(sortPositionMiddle);
+                    // Miller.setSorterServoPosition(sortPositionMiddle);
                     Miller.setIntakePower(85);
                     //Miller.indexerPower(-5, Miller.leftIndexerServo);
                     //Miller.setStoppers(true, true);
@@ -575,9 +648,9 @@ public class ReggieRedCloseAuto_v4 extends OpMode {
                 }
                 break;
             case 119:
-                /**
-                 * Wait for shooter to speed up then shoot
-                 */
+                //**
+                // * Wait for shooter to speed up then shoot
+                // */
                 if (!follower.isBusy() && Miller.targetVelocityAcquired(Reggie.SIDES.LEFT)){
                     //Miller.stopEverything();
                     Miller.setStoppers(false,false);
@@ -636,10 +709,10 @@ public class ReggieRedCloseAuto_v4 extends OpMode {
                     Miller.indexerPower(0, Miller.rightIndexerServo);
                 }
                 break;
-             case 203:
-                 /**
-                  * Shooting First Purple Artifact
-                  */
+            case 203:
+                /**
+                 * Shooting First Purple Artifact
+                 */
 
                 if(pathTimer.getElapsedTimeSeconds() >= 0.45){
                     Miller.setIntakePower(0);
@@ -787,7 +860,7 @@ public class ReggieRedCloseAuto_v4 extends OpMode {
                  * Wait for shooter to speed up then shoot
                  */
                 if (!follower.isBusy() && Miller.targetVelocityAcquired(Reggie.SIDES.RIGHT)){
-                   //Miller.stopEverything();
+                    //Miller.stopEverything();
                     //Miller.setStoppers(false,false);
                     Miller.setIntakePower(75);
                     Miller.indexerPower(60, Miller.rightIndexerServo);
@@ -875,7 +948,7 @@ public class ReggieRedCloseAuto_v4 extends OpMode {
                  * Pause to retrieve the Second Purple Ball from Middle Row
                  */
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds()>0.35){
-                   // Miller.setSorterServoPosition(sortPositionMidLeft);
+                    // Miller.setSorterServoPosition(sortPositionMidLeft);
                     //Miller.setStoppers(false, false);
                     setPathState(224);
                 }
@@ -1338,20 +1411,20 @@ public class ReggieRedCloseAuto_v4 extends OpMode {
          *
          */
 
-            follower.update();
-            autonomousPathUpdate();
-            // Feedback to Driver Hub for debugging
-            telemetry.addData("motif", motif);
-            telemetry.addData("path state", pathState);
-            telemetry.addData("x", follower.getPose().getX());
-            telemetry.addData("y", follower.getPose().getY());
-            telemetry.addData("heading", follower.getPose().getHeading());
-            telemetry.addData("shooter power Left Error", ((Miller.leftShooterMotor.getVelocity() + Miller.rightShooterMotor.getVelocity())/2) - Miller.TARGET_MIN_VELOCITY_LEFT);
-            telemetry.addData("shooter power Right Error", ((Miller.leftShooterMotor.getVelocity() + Miller.rightShooterMotor.getVelocity())/2) - Miller.TARGET_MIN_VELOCITY_RIGHT );
-            telemetry.addData("Shooter velocity:", (Miller.rightShooterMotor.getVelocity() + Miller.leftShooterMotor.getVelocity()) / 2);
-            telemetry.update();
+        follower.update();
+        autonomousPathUpdate();
+        // Feedback to Driver Hub for debugging
+        telemetry.addData("motif", motif);
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("shooter power Left Error", ((Miller.leftShooterMotor.getVelocity() + Miller.rightShooterMotor.getVelocity())/2) - Miller.TARGET_MIN_VELOCITY_LEFT);
+        telemetry.addData("shooter power Right Error", ((Miller.leftShooterMotor.getVelocity() + Miller.rightShooterMotor.getVelocity())/2) - Miller.TARGET_MIN_VELOCITY_RIGHT );
+        telemetry.addData("Shooter velocity:", (Miller.rightShooterMotor.getVelocity() + Miller.leftShooterMotor.getVelocity()) / 2);
+        telemetry.update();
 
-        }
+    }
 
     public int order(HuskyLens hl) {
         int orden = 0;
