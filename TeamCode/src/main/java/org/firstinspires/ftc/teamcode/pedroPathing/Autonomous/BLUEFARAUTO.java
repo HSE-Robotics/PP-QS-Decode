@@ -72,7 +72,7 @@ public class BLUEFARAUTO extends OpMode {
     private Path Start;
     private PathChain StarttoShoot, ShoottoPickup, ShoottoLeave, PickuptoShoot;
     private final Pose startPose = new Pose(56, 8, Math.toRadians(90)); // Start Pose of our robot.
-    private final Pose shootPose = new Pose(60, 24, Math.toRadians(117));
+    private final Pose shootPose = new Pose(60, 24, Math.toRadians(115));
     private final Pose pickup = new Pose(18, 26,Math.toRadians(193)); // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
     private final Pose pickupControl = new Pose(40, 29);
     private final Pose leavingPose = new Pose(18, 26, Math.toRadians(190)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
@@ -188,8 +188,8 @@ public class BLUEFARAUTO extends OpMode {
                 //This is following the path to begin shooting, while also having our flywheels on
                 follower.followPath(StarttoShoot, 0.9, true);
                 Miller.setStoppers(true, true);
-                Miller.TARGET_MIN_VELOCITY_LEFT = 1300;
-                Miller.TARGET_VELOCITY_LEFT = 1400;
+                Miller.TARGET_MIN_VELOCITY_LEFT = 1250;
+                Miller.TARGET_VELOCITY_LEFT = 1350;
                 Miller.setShooterVelocity(Reggie.SIDES.LEFT);
                 setPathState(1);
 
@@ -209,12 +209,15 @@ public class BLUEFARAUTO extends OpMode {
 
 
 
+
+
             case 2:
                     if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 3.0 && intake < 3) {
                         follower.followPath(ShoottoPickup);
                         Miller.setIntakePower(85);
                         intake = intake + 1;
                         Miller.setStoppers(true, true);
+
 
                         setPathState(3);
 
@@ -443,29 +446,7 @@ public class BLUEFARAUTO extends OpMode {
 
     }
 
-    public int order(HuskyLens hl) {
-        int orden = 0;
-        HuskyLens.Block[] blocks = Miller.huskyLens.blocks();
-        for (int i = 0; i < blocks.length; i++) {
-            if (blocks[i].id == 3) {
-                //PPG
-                orden = 1;
-            }
-            if (blocks[i].id == 4) {
-                //GPP
-                orden = 2;
-            }
-            if (blocks[i].id == 5){
-                //PGP
-                orden = 3;
 
-            }
-            else if (blocks[i].width != 44 && blocks[i].height != 44){
-            }
-        }
-
-        return orden;
-    }
 
 
 }

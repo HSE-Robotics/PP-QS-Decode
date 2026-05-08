@@ -77,27 +77,27 @@ public class REDCLOSEAUTO extends OpMode {
             aimingFirstBallMiddleRowPath, pickFirstBallMiddleRowPath, pickSecondBallMiddleRowPath,
             pickThirdBallMiddleRowPath, leavePath, pickThirdBallMiddleRowPathPPG, scoreFromMiddleRowPathPPG, pickSecondBallMiddleRowPathPPG, Shoot2;
     private final Pose startPose = new Pose(100, 136, Math.toRadians(90)); // Start Pose of our robot.
-    private final Pose shootPose = new Pose(84.5, 105.5, Math.toRadians(52));
+    private final Pose shootPose = new Pose(84.5, 104.5, Math.toRadians(52));
     private final Pose shootPosecontrolpoint = new Pose(80, 80.5, Math.toRadians(50));
     private final Pose shootPose3controlpoint = new Pose(35, 82.5, Math.toRadians(50));
 
     // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
-    private final Pose shootPose2 = new Pose(84, 105, Math.toRadians(40)); // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
+    private final Pose shootPose2 = new Pose(84, 105, Math.toRadians(38.5)); // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
     private final Pose shootPose3 = new Pose(83, 113, Math.toRadians(47.5));
-    private final Pose shootPose4 = new Pose(76, 120, Math.toRadians(38)); // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
+    private final Pose shootPose4 = new Pose(76, 120, Math.toRadians(35)); // Scoring Pose of our robot. It is facing the goal at 47 degree aScoring Pose ofngle.
     private final Pose middleRowStart1 = new Pose(79, yMidRow-9, Math.toRadians(0));
     private final Pose middleRowEnd1=new Pose(95,yMidRow-9, Math.toRadians(0));
     private final Pose middleRowStart2=new Pose(93 ,yMidRow-2.5, Math.toRadians(0));
     private final Pose middleRowEnd2=new Pose(115,yMidRow-2.5, Math.toRadians(0));
     private final Pose middleRowEnd2controlpoint =new Pose(60,yMidRow-6.5, Math.toRadians(0));
 
-    private final Pose opengate1=new Pose(99,61, Math.toRadians(22.5));
-    private final Pose opengateforward1=new Pose(108,61.75, Math.toRadians(30));
+    private final Pose opengate1=new Pose(101,64.5, Math.toRadians(19.5));
+    private final Pose opengateforward1=new Pose(110,64.5, Math.toRadians(26));
 
-    private final Pose opengate1curve =new Pose(50,75);
+    private final Pose opengate1curve =new Pose(45,75);
     private final Pose topRowStart =new Pose(86,89, Math.toRadians(0) );
-    private final Pose topRowEnd =new Pose(114,89, Math.toRadians(0));
-    private final Pose toprowendcurve =new Pose(70,96, Math.toRadians(0));
+    private final Pose topRowEnd =new Pose(100,89, Math.toRadians(0));
+    private final Pose toprowendcurve =new Pose(65,96, Math.toRadians(0));
 
 
 
@@ -363,13 +363,14 @@ public class REDCLOSEAUTO extends OpMode {
 
             case 14:
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.0) {
-                    requestOpModeStop();
+                    follower.followPath(TopRowEndtoShoot4, 0.7, true);
+                    setPathState(15);
 
                 }
                 break;
 
             case 15:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 1.0) {
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 2.0) {
                     Miller.indexerPower(60, Miller.rightIndexerServo);
                     Miller.indexerPower(60, Miller.leftIndexerServo);
                     Miller.setStoppers(false, false);
@@ -1426,29 +1427,7 @@ public class REDCLOSEAUTO extends OpMode {
 
     }
 
-    public int order(HuskyLens hl) {
-        int orden = 0;
-        HuskyLens.Block[] blocks = Miller.huskyLens.blocks();
-        for (int i = 0; i < blocks.length; i++) {
-            if (blocks[i].id == 3) {
-                //PPG
-                orden = 1;
-            }
-            if (blocks[i].id == 4) {
-                //GPP
-                orden = 2;
-            }
-            if (blocks[i].id == 5){
-                //PGP
-                orden = 3;
 
-            }
-            else if (blocks[i].width != 44 && blocks[i].height != 44){
-            }
-        }
-
-        return orden;
-    }
 
 
 }

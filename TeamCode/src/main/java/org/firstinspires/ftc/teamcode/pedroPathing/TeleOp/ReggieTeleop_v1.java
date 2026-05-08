@@ -243,25 +243,6 @@ public class ReggieTeleop_v1 extends OpMode {
             inEndgame = true;
         }
 
-        HuskyLens.Block[] blocks = Miller.huskyLens.blocks();
-        for (int i = 0; i < blocks.length; i++) {
-            telemetry.addData("Block", blocks[i].toString());
-            if (blocks[i].id == 1) {
-                telemetry.addLine("RED");
-                Side = 1;
-            }
-            if (blocks[i].id == 2) {
-                telemetry.addLine("BLUE");
-                Side = 2;
-            }
-            if (!(blocks[i].id == 1 || blocks[i].id == 2)){
-                telemetry.addLine("NONE");
-                Side = 0;
-            }
-
-
-        }
-
         telemetry.addData("Side", Side);
 
         telemetry.addData("Play Time: ", playTime.seconds());

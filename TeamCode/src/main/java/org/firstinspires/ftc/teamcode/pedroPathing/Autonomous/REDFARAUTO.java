@@ -75,10 +75,10 @@ public class REDFARAUTO extends OpMode {
     private final Pose startPose = new Pose(88, 8, Math.toRadians(90));
 
     // Original: new Pose(60, 24, Math.toRadians(117));
-    private final Pose shootPose = new Pose(84, 18, Math.toRadians(66));
+    private final Pose shootPose = new Pose(84, 18, Math.toRadians(69));
 
     // Original: new Pose(18, 26, Math.toRadians(193));
-    private final Pose pickup = new Pose(110, 13, Math.toRadians(-40));
+    private final Pose pickup = new Pose(110, 15, Math.toRadians(-40));
 
     // Original: new Pose(40, 29);
     private final Pose pickupControl = new Pose(106, 37);
@@ -199,8 +199,8 @@ public class REDFARAUTO extends OpMode {
                 //This is following the path to begin shooting, while also having our flywheels on
                 follower.followPath(StarttoShoot, 0.9, true);
                 Miller.setStoppers(true, true);
-                Miller.TARGET_MIN_VELOCITY_LEFT = 1300;
-                Miller.TARGET_VELOCITY_LEFT = 1400;
+                Miller.TARGET_MIN_VELOCITY_LEFT = 1275;
+                Miller.TARGET_VELOCITY_LEFT = 1375;
                 Miller.setShooterVelocity(Reggie.SIDES.LEFT);
                 setPathState(1);
 
@@ -216,6 +216,7 @@ public class REDFARAUTO extends OpMode {
                 }
 
                 break;
+
 
 
 
@@ -458,29 +459,7 @@ public class REDFARAUTO extends OpMode {
 
     }
 
-    public int order(HuskyLens hl) {
-        int orden = 0;
-        HuskyLens.Block[] blocks = Miller.huskyLens.blocks();
-        for (int i = 0; i < blocks.length; i++) {
-            if (blocks[i].id == 3) {
-                //PPG
-                orden = 1;
-            }
-            if (blocks[i].id == 4) {
-                //GPP
-                orden = 2;
-            }
-            if (blocks[i].id == 5){
-                //PGP
-                orden = 3;
 
-            }
-            else if (blocks[i].width != 44 && blocks[i].height != 44){
-            }
-        }
-
-        return orden;
-    }
 
 
 }

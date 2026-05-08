@@ -383,29 +383,7 @@ public class ReggieAutoFARBLUE_v3 extends OpMode {
 
         }
 
-    public int order(HuskyLens hl) {
-        int orden = 0;
-        HuskyLens.Block[] blocks = Miller.huskyLens.blocks();
-        for (int i = 0; i < blocks.length; i++) {
-            if (blocks[i].id == 3) {
-                //PPG
-                orden = 1;
-            }
-            if (blocks[i].id == 4) {
-                //GPP
-                orden = 2;
-            }
-            if (blocks[i].id == 5){
-                //PGP
-                orden = 3;
 
-            }
-            else if (blocks[i].width != 44 && blocks[i].height != 44){
-            }
-        }
-
-        return orden;
-    }
     public void setShooterSide(ShooterSide side) {
         if (side == ShooterSide.LEFT) {
             leftShooterMotor.setVelocity(TARGET_VELOCITY_LEFT);

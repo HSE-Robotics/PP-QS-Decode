@@ -39,7 +39,6 @@ public class Reggie {
     public Servo leftStopper = null;
     public CRServo leftIndexerServo = null;
     public CRServo rightIndexerServo = null;
-    public HuskyLens huskyLens;
     public ElapsedTime idlerTime;
 //    public ColorSensor rightColorSensor = null;
 //    public ColorSensor leftColorSensor = null;
@@ -98,19 +97,16 @@ public class Reggie {
         leftShooterMotor = hwMap.get(DcMotorEx.class, "LS");
         rightShooterMotor = hwMap.get(DcMotorEx.class, "RS");
 
-        parkingLift = hwMap.get(DcMotorEx.class, "lift");
-
         // Define and Initialize Servos
-        sorterServo = hwMap.get(Servo.class, "indServo");
         rightStopper = hwMap.get(Servo.class, "RStopper");
         leftStopper = hwMap.get(Servo.class, "LStopper");
         leftIndexerServo = hwMap.get(CRServo.class, "LServo");
         rightIndexerServo = hwMap.get(CRServo.class, "RServo");
+        sorterServo = hwMap.get(Servo.class,"sorter");
 
 
 
         //Define and Initialize Sensors
-        huskyLens = hwMap.get(HuskyLens.class, "huskylens");
 //        rightColorSensor = hwMap.get(ColorSensor.class, "colorSensorRight");
 //        leftColorSensor = hwMap.get(ColorSensor.class, "colorSensorLeft");
 
@@ -124,10 +120,8 @@ public class Reggie {
         leftShooterMotor.setPower(0);
         rightShooterMotor.setPower(0);
 
-        parkingLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        parkingLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        parkingLift.setPower(0);
+
         //leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pathTimer = new Timer();
@@ -145,7 +139,6 @@ public class Reggie {
         //rightShooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
 
         //Set all Sensors
-        huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
 
         usingPIDF = true;
 
@@ -175,14 +168,7 @@ public class Reggie {
         }
     }
 
-    public void parking(){
-        this.parkingLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.parkingLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.parkingLift.setTargetPosition(this.parkingLift.getCurrentPosition() - 450);
 
-        this.parkingLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.parkingLift.setPower(0.75);
-    }
 
     public void setIntakePower(double power) {
         this.intakeMotor.setPower(power);
@@ -199,78 +185,7 @@ public class Reggie {
         indexer.setPower(power*0.01);
     }
 
-    public boolean aim(HuskyLens hl) {
-        int Side = 0;
-        boolean fire = false;
-        HuskyLens.Block[] blocks = huskyLens.blocks();
-        for (int i = 0; i < blocks.length; i++) {
-            if (blocks[i].id == 1) {
-                //RED
-                Side = 1;
-            }
-            if (blocks[i].id == 2) {
-                //Blue
-                Side = 2;
-            }
-            if ((blocks[i].id == 1 || blocks[i].id == 2) && (blocks[i].width >= 44 && blocks[i].width <= 52 && blocks[i].height >= 44 && blocks[i].height <= 52))
-                fire = true;
-            else if (!(blocks[i].id == 1 || blocks[i].id == 2)){
-                fire = false;
-            }
-        }
 
-        return fire;
-    }
-    public int order(HuskyLens hl) {
-        int orden = 0;
-        HuskyLens.Block[] blocks = huskyLens.blocks();
-        for (HuskyLens.Block block : blocks) {
-            if (block.id == 3) {
-                //PPG
-                orden = 1;
-            }
-            if (block.id == 4) {
-                //GPP
-                orden = 2;
-            }
-            if (block.id == 5) {
-                //PGP
-                orden = 3;
-
-            } else if (block.width != 44 && block.height != 44) {
-            }
-        }
-
-        return orden;
-    }
-
-
-    public void PPG(){
-        indexerPower(70, leftIndexerServo);
-        setIntakePower(100);
-        setSorterServoPosition(1);
-        if(pathTimer.getElapsedTimeSeconds() >=5){
-            setSorterServoPosition(0);
-            indexerPower(80, rightIndexerServo);
-            if (pathTimer.getElapsedTimeSeconds() >= 7){
-                indexerPower(0, rightIndexerServo);
-                indexerPower(0, leftIndexerServo);
-                setShooterPower(0);
-                setIntakePower(0);
-            }
-        }
-    }
-
-    public void shootClose(){
-
-        setShooterPower(60);
-
-        if (order(huskyLens) == 1) {
-            PPG();
-        }
-
-
-    }
 
     public void stopEverything(){
         this.setShooterPower(0);

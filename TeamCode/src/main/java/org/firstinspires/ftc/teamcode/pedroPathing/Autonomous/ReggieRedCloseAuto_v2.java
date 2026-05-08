@@ -248,7 +248,7 @@ public class ReggieRedCloseAuto_v2 extends OpMode {
 
                 break;
             case 11:
-                motif = order(Miller.huskyLens);
+                //motif = order(Miller.huskyLens);
                 if(!follower.isBusy() && pathTimer.getElapsedTimeSeconds() >= 0.75 && (motif==1 || motif==2 || motif==3)){
                     setPathState(1);
                 }
@@ -1296,37 +1296,4 @@ public class ReggieRedCloseAuto_v2 extends OpMode {
 
         }
 
-    public int order(HuskyLens hl) {
-        int motifRead = 0;
-        HuskyLens.Block[] blocks = Miller.huskyLens.blocks();
-        for (HuskyLens.Block block : blocks) {
-
-            switch(block.id){
-                case 4:
-                    motifRead = 2;
-                    break;
-                case 5:
-                    motifRead = 3;
-                    break;
-                default:
-                    motifRead = 1;
-            }
-//            if (block.id == 3) {
-//                //PPG
-//                orden = 1;
-//            }
-//            if (block.id == 4) {
-//                //GPP
-//                orden = 2;
-//            }
-//            if (block.id == 5) {
-//                //PGP
-//                orden = 3;
-//
-//            } else if (block.width != 44 && block.height != 44) {
-//            }
-        }
-
-        return motifRead;
-    }
     }
